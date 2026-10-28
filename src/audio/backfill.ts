@@ -1,14 +1,12 @@
 import { db } from '../db/db.ts'
 import { getActive, writeRecord } from '../db/repo.ts'
 import { lookupDictionaryOutcome, type LookupOutcome } from '../lib/dictionary.ts'
+import type { Entry } from '../shared/index.ts'
+import { countEntriesNeedingAudio, needsAudio } from './needsAudio.ts'
 
-/** Entries that have not been asked about a UK recording yet. */
-export async function entriesNeedingAudio(limit = 20) {
-  const all = await db.entries.toArray()
-  return all
-    .filter((entry) => entry.deletedAt === undefined && entry.status !== 'pending_ai' && !entry.audioUrl && !entry.audioCheckedAt)
-    .sort((a, b) => b.createdAt - a.createdAt)
-    .slice(0, limit)
+/** Entries that have not been asked about a UK recording yet, newest first. */
+export async function entriesNeedingAudio(limit = 20): Promise<Entry[]> {
+  return db.entries.orderBy('createdAt').reverse().filter(needsAudio).limit(limit).toArray()
 }
 
 export interface BackfillDeps {
@@ -42,6 +40,22 @@ export async function backfillAudioUrls(deps: BackfillDeps = {}): Promise<number
       if (audioUrl) found += 1
     }
     if (deps.pauseMs) await new Promise((resolve) => setTimeout(resolve, deps.pauseMs))
+  }
+  return found
+}
+
+/**
+ * Keeps calling `backfillAudioUrls` until nothing is left to ask, or until a pass makes no progress
+ * (offline, service down), so a long list is not stuck at the first batch.
+ */
+export async function runAudioBackfill(deps: BackfillDeps = {}): Promise<number> {
+  let found = 0
+  let before = await countEntriesNeedingAudio()
+  while (before > 0) {
+    found += await backfillAudioUrls(deps)
+    const after = await countEntriesNeedingAudio()
+    if (after >= before) break
+    before = after
   }
   return found
 }

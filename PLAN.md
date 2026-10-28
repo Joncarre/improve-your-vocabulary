@@ -1,6 +1,6 @@
 # PLAN — App de vocabulario en inglés británico (PWA personal)
 
-> **Estado:** Fase 2 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1 y 2) · esperando tu confirmación para la Fase 3
+> **Estado:** Fase 3 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1, 2 y 3) · esperando tu confirmación para la Fase 4
 > **Última actualización:** 2026-10-28
 
 **Leyenda:** `[ ]` pendiente · `[x]` hecho · **✅** criterio de aceptación del documento · 🤖 lo verifico yo (tests, capturas, Lighthouse) · 📱 lo compruebas tú en el iPhone real · 👤 acción tuya (cuentas, paneles, claves)
@@ -27,7 +27,7 @@
 | 0 | Plan | hecha |
 | 1 | Cimientos y despliegue | hecha y desplegada; faltan las comprobaciones en el iPhone |
 | 2 | Añadir palabras con IA | hecha; faltan las comprobaciones en el iPhone |
-| 3 | Ficha y audio | pendiente |
+| 3 | Ficha y audio | hecha; faltan las comprobaciones en el iPhone |
 | 4 | Vocabulario, temas y fuentes | pendiente |
 | 5 | Repaso (FSRS) | pendiente |
 | 6 | Sincronización y copias | pendiente |
@@ -162,35 +162,36 @@
 ### Fase 3 — Ficha y audio
 
 **3a · Audio**
-- [ ] (docs) Web Speech API en iOS (`voiceschanged`, gesto del usuario) y formato de los mp3 de la Free Dictionary
-- [ ] `src/audio/`: carga de voces esperando a `voiceschanged` con tiempo límite, mejor voz `en-GB`, `speak(texto, { rate })` fijando siempre `lang = 'en-GB'`, cancelación de la anterior, desbloqueo tras un gesto en iOS
-- [ ] Grabación UK solo si la URL es `-uk`/`_gb_` (se descartan `-us` y `-au`): `fetch` → Blob → `Audio`, con tiempo límite y salto inmediato a voz sintética; la caché CacheFirst (máx. 500) la hace el service worker; una URL que falla no se reintenta en esa sesión
-- [ ] Al guardar una entrada, buscar `audioUrl` en segundo plano (sin bloquear) y rellenar las entradas ya guardadas
-- [ ] `SpeakerButton` (normal y lento a 0,7) con `aria-label` y estado de reproducción
-- [ ] Ajustes de voz: lista de voces `en-GB`, botón de prueba, velocidad y nota sobre las voces mejoradas de iOS; el audio automático funciona (con el toque de «Empezar» y de cada valoración como gesto, R2)
+- [x] (docs) Web Speech API en iOS (`voiceschanged`, gesto del usuario) y formato de los mp3 de la Free Dictionary
+- [x] `src/audio/`: carga de voces esperando a `voiceschanged` con tiempo límite, mejor voz `en-GB`, `speak(texto, { rate })` fijando siempre `lang = 'en-GB'`, cancelación de la anterior, desbloqueo tras un gesto en iOS
+- [x] Grabación UK solo si la URL es `-uk`/`_gb_` (se descartan `-us` y `-au`): `fetch` → Blob → `Audio`, con tiempo límite y salto inmediato a voz sintética; la caché CacheFirst (máx. 500) la hace el service worker; una URL que falla no se reintenta en esa sesión
+- [x] Al guardar una entrada, buscar `audioUrl` en segundo plano (sin bloquear) y rellenar las entradas ya guardadas
+- [x] `SpeakerButton` (normal y lento a 0,7) con `aria-label` y estado de reproducción
+- [x] Ajustes de voz: lista de voces `en-GB`, botón de prueba, velocidad y nota sobre las voces mejoradas de iOS
+- [ ] El audio automático funciona (con el toque de «Empezar» y de cada valoración como gesto, R2): el ajuste y el mecanismo están hechos; se comprueba con la pantalla de repaso en la Fase 5
 
 **3b · Ficha de palabra (`/entry/:id`)**
-- [ ] 1 · Cabecera: lema, IPA, altavoz y «lento», chips de tipo con color, CEFR y registro (aviso visible si es *slang* u *offensive*)
-- [ ] 2 · Dónde la viste: tus frases con la palabra resaltada, traducción plegable, fuente y detalle, altavoz
-- [ ] 3 · Acepciones agrupadas por tipo de palabra: la de tu frase destacada; 2 ejemplos con audio y traducción plegable
-- [ ] 4 · Formas (verbo, sustantivo, adjetivo) con distintivo «irregular», variantes y altavoz en cada forma
-- [ ] 5 · Familia de palabras: chips que abren la ficha si ya está en la colección o muestran «Añadir» (usa la hoja de la Fase 2)
-- [ ] 6 · Sinónimos, antónimos y colocaciones
-- [ ] 7 · Nota para hispanohablantes y diferencias UK/US
-- [ ] 8 · Relacionadas en tu colección (máx. 8)
-- [ ] 9 · Progreso: estado, veces vista, aciertos, fallos, %, racha, próxima revisión y últimos 10 intentos (con datos reales desde la Fase 5)
-- [ ] 10 · Acciones: editar, regenerar ejemplos (IA, con `examples_only`), archivar, reiniciar progreso, eliminar con confirmación
-- [ ] Resaltado de la palabra en la frase (con `contextSurface`; si no, por formas conocidas)
-- [ ] Editor de la ficha
-- [ ] Tests: resaltado, selección de voz, filtrado de URLs de audio, reinicio de progreso, archivar y eliminar (borrado lógico)
+- [x] 1 · Cabecera: lema, IPA, altavoz y «lento», chips de tipo con color, CEFR y registro (aviso visible si es *slang* u *offensive*)
+- [x] 2 · Dónde la viste: tus frases con la palabra resaltada, traducción plegable, fuente y detalle, altavoz
+- [x] 3 · Acepciones agrupadas por tipo de palabra: la de tu frase destacada; 2 ejemplos con audio y traducción plegable
+- [x] 4 · Formas (verbo, sustantivo, adjetivo) con distintivo «irregular», variantes y altavoz en cada forma
+- [x] 5 · Familia de palabras: chips que abren la ficha si ya está en la colección o muestran «Añadir» (usa la hoja de la Fase 2)
+- [x] 6 · Sinónimos, antónimos y colocaciones
+- [x] 7 · Nota para hispanohablantes y diferencias UK/US
+- [x] 8 · Relacionadas en tu colección (máx. 8)
+- [x] 9 · Progreso: estado, veces vista, aciertos, fallos, %, racha, próxima revisión y últimos 10 intentos (con datos reales desde la Fase 5)
+- [x] 10 · Acciones: editar, regenerar ejemplos (IA, con `examples_only`), archivar, reiniciar progreso, eliminar con confirmación
+- [x] Resaltado de la palabra en la frase (con `contextSurface`; si no, por formas conocidas)
+- [x] Editor de la ficha
+- [x] Tests: resaltado, selección de voz, filtrado de URLs de audio, reinicio de progreso, archivar y eliminar (borrado lógico)
 
 **Criterios de aceptación**
-- [ ] ✅ 📱 El audio suena en el iPhone y en el PC (grabación UK si existe; si no, voz `en-GB`)
-- [ ] ✅ 🤖📱 La IPA se ve bien en los dos
+- [ ] ✅ 📱 El audio suena en el iPhone y en el PC (grabación UK si existe; si no, voz `en-GB`) (🤖 comprobado con `speechSynthesis` simulado: todo sale con `lang = en-GB`, la mejor voz británica, 0,95× y 0,7× en «despacio»; el servidor de grabaciones de la Free Dictionary devuelve 502, así que suena la voz del dispositivo)
+- [x] ✅ 🤖📱 La IPA se ve bien en los dos (🤖 comprobado a 375, 320 y 1280 px en Chromium y WebKit; falta verla en el iPhone real)
 
 ### Fase 4 — Vocabulario, temas y fuentes
 
-- [ ] Función pura de estado de palabra (nueva, aprendiendo, en repaso, consolidada, dominada; §7) en `src/srs/state.ts`, con tests; la reutiliza la Fase 5
+- [x] Función pura de estado de palabra (nueva, aprendiendo, en repaso, consolidada, dominada; §7) en `src/srs/state.ts`, con tests; la reutiliza la Fase 5 (adelantada en la Fase 3, que la usa en la ficha)
 - [ ] Índice de búsqueda en memoria (sin acentos, inglés y español) alimentado con `useLiveQuery`
 - [ ] Pantalla Vocabulario: filas de ~52 px; vistas Todas / Por tema / Por fuente / Por tipo de palabra; filtros por estado (incluidos pendientes y rebeldes); orden por recientes, alfabético, más falladas y próxima revisión; atajo `/` para buscar
 - [ ] Estados vacíos y esqueletos

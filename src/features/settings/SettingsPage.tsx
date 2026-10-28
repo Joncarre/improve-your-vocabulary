@@ -13,6 +13,7 @@ import { IconButton } from '../../ui/Button.tsx'
 import { Chip } from '../../ui/Chip.tsx'
 import { RangeField, SelectField, SettingRow, SettingsSection, Stepper, Switch } from '../../ui/controls.tsx'
 import { PageHeader } from '../../ui/PageHeader.tsx'
+import { VoiceSettings } from './VoiceSettings.tsx'
 
 const HOUR_OPTIONS = Array.from({ length: 9 }, (_, hour) => ({
   value: String(hour),
@@ -92,7 +93,10 @@ export default function SettingsPage() {
         </SettingRow>
       </SettingsSection>
 
-      <SettingsSection title="Audio" note="En este dispositivo. La elección de voz llegará con el audio.">
+      <SettingsSection
+        title="Audio"
+        note="En este dispositivo. En el iPhone se oyen mucho mejor las voces mejoradas: Ajustes → Accesibilidad → Contenido leído → Voces → Inglés, y descarga una de «Reino Unido»."
+      >
         <SettingRow label="Reproducir audio al mostrar la palabra">
           <Switch
             label="Reproducir audio al mostrar la palabra"
@@ -100,6 +104,7 @@ export default function SettingsPage() {
             onChange={(autoPlayAudio) => void saveDeviceSettings({ autoPlayAudio })}
           />
         </SettingRow>
+        <VoiceSettings />
         <SettingRow label="Velocidad de la voz">
           <RangeField
             label="Velocidad de la voz"

@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { BookOpen } from 'lucide-react'
+import { Link } from 'react-router'
 import { listActive } from '../../db/repo.ts'
 import { POS_LABEL_ES, posTone } from '../../lib/pos.ts'
 import { Chip } from '../../ui/Chip.tsx'
@@ -28,21 +29,28 @@ export default function LibraryPage() {
           {entries.map((entry) => {
             const first = entry.senses[0]
             return (
-              <li key={entry.id} className="flex min-h-[52px] items-center gap-3 px-3 py-2">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline gap-2">
-                    <span className="truncate font-serif text-section font-medium">{entry.lemma}</span>
-                    {entry.ipa ? <span className="ipa shrink-0 text-caption text-text-3">{entry.ipa}</span> : null}
+              <li key={entry.id}>
+                <Link
+                  to={`/entry/${entry.id}`}
+                  className="flex min-h-[52px] items-center gap-3 px-3 py-2 active:bg-surface-2"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline gap-2">
+                      <span className="truncate font-serif text-section font-medium">{entry.lemma}</span>
+                      {entry.ipa ? <span className="ipa shrink-0 text-caption text-text-3">{entry.ipa}</span> : null}
+                    </div>
+                    <div className="truncate text-secondary text-text-2">
+                      {first?.meaningEs || (entry.status === 'pending_ai' ? 'Esperando a la IA…' : '')}
+                    </div>
                   </div>
-                  <div className="truncate text-secondary text-text-2">
-                    {first?.meaningEs || (entry.status === 'pending_ai' ? 'Esperando a la IA…' : '')}
-                  </div>
-                </div>
-                {entry.status === 'pending_ai' ? (
-                  <Chip tone="hard">Pendiente</Chip>
-                ) : first ? (
-                  <Chip tone={posTone(first.pos)}>{POS_LABEL_ES[first.pos]}</Chip>
-                ) : null}
+                  {entry.status === 'pending_ai' ? (
+                    <Chip tone="hard">Pendiente</Chip>
+                  ) : entry.status === 'archived' ? (
+                    <Chip>Archivada</Chip>
+                  ) : first ? (
+                    <Chip tone={posTone(first.pos)}>{POS_LABEL_ES[first.pos]}</Chip>
+                  ) : null}
+                </Link>
               </li>
             )
           })}

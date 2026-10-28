@@ -41,6 +41,18 @@ export default defineConfig({
         // API calls must never be answered with the app shell.
         navigateFallbackDenylist: [/^\/api\//],
         cleanupOutdatedCaches: true,
+        runtimeCaching: [
+          {
+            // UK recordings of the free dictionary: once heard, a word also plays offline.
+            urlPattern: /^https:\/\/api\.dictionaryapi\.dev\/media\//,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'dictionary-audio',
+              expiration: { maxEntries: 500 },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
+        ],
       },
     }),
   ],

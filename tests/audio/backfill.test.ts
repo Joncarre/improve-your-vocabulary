@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { backfillAudioUrls, entriesNeedingAudio } from '../../src/audio/backfill.ts'
+import { backfillAudioUrls, entriesNeedingAudio, runAudioBackfill } from '../../src/audio/backfill.ts'
+import { countEntriesNeedingAudio } from '../../src/audio/needsAudio.ts'
 import { db } from '../../src/db/db.ts'
 import { writeRecord } from '../../src/db/repo.ts'
 import type { LookupOutcome } from '../../src/lib/dictionary.ts'
@@ -90,5 +91,36 @@ describe('backfillAudioUrls', () => {
     await backfillAudioUrls({ lookup, limit: 2 })
 
     expect(lookup).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('runAudioBackfill', () => {
+  it('goes on past the first batch until nothing is left', async () => {
+    for (let i = 0; i < 5; i += 1) await add(`w${i}`, { createdAt: i })
+    const lookup = vi.fn(async () => ({ kind: 'missing' }) as LookupOutcome)
+
+    await runAudioBackfill({ lookup, limit: 2 })
+
+    expect(lookup).toHaveBeenCalledTimes(5)
+    expect(await countEntriesNeedingAudio()).toBe(0)
+  })
+
+  it('stops when a pass makes no progress instead of looping while the service is down', async () => {
+    await add('a')
+    await add('b')
+    const lookup = vi.fn(async () => ({ kind: 'unavailable' }) as LookupOutcome)
+
+    await runAudioBackfill({ lookup, limit: 1 })
+
+    expect(lookup).toHaveBeenCalledTimes(1)
+    expect(await countEntriesNeedingAudio()).toBe(2)
+  })
+
+  it('does nothing when every word has been asked already', async () => {
+    await add('done', { audioCheckedAt: 1 })
+    const lookup = vi.fn(async () => ({ kind: 'missing' }) as LookupOutcome)
+
+    expect(await runAudioBackfill({ lookup })).toBe(0)
+    expect(lookup).not.toHaveBeenCalled()
   })
 })

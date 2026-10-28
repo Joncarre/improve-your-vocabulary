@@ -1,4 +1,4 @@
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost'
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
 
 const BASE =
   'inline-flex h-10 items-center justify-center gap-2 rounded-control px-4 text-body transition-colors disabled:opacity-40'
@@ -7,6 +7,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
   primary: 'bg-accent font-semibold text-bg active:opacity-80',
   secondary: 'border border-border bg-surface-2 text-text active:bg-surface',
   ghost: 'text-text-2 active:bg-surface-2',
+  danger: 'border border-again/40 bg-again/10 text-again active:bg-again/20',
 }
 
 /** Class list for anything that should look like a button (also usable on router links). */
