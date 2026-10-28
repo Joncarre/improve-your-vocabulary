@@ -1,6 +1,6 @@
 import type { GameAnswer } from '../../games/record.ts'
 import type { GameWord, PickOptions } from '../../games/words.ts'
-import type { Entry } from '../../shared/index.ts'
+import type { Entry, Source, Topic } from '../../shared/index.ts'
 
 /** What a game hands back when it ends. */
 export interface GameOutcome {
@@ -17,6 +17,9 @@ export interface GamePlayProps {
   words: GameWord[]
   /** Every playable word, for wrong options. */
   pool: Entry[]
+  /** Names of the topics and the sources, for the links of Conexiones. */
+  topics: Topic[]
+  sources: Source[]
   /** Times each word has been played in this game before. */
   turns: ReadonlyMap<string, number>
   variant: string

@@ -1,10 +1,15 @@
 import {
   AiErrorResponseSchema,
   EnrichResponseSchema,
+  normalizeStory,
+  StoryResponseSchema,
+  storyTargetsNeeded,
   type AiErrorCode,
   type EnrichOutput,
   type EnrichPayloadInput,
   type EnrichResponse,
+  type StoryOutput,
+  type StoryPayloadInput,
 } from '../shared/index.ts'
 
 /** The browser gives up slightly after the server's own 25 s budget. */
@@ -41,7 +46,8 @@ function isOnline(options: RequestOptions): boolean {
   return typeof navigator === 'undefined' ? true : navigator.onLine
 }
 
-export async function callAi(payload: EnrichPayloadInput, options: RequestOptions): Promise<EnrichResponse> {
+/** One request to /api/ai: the answer's JSON, or an AiError with the server's own Spanish message. */
+async function postAi(action: 'enrich' | 'story', payload: unknown, options: RequestOptions): Promise<unknown> {
   if (!options.secret.trim()) throw new AiError('unauthorized', 'Falta el secreto: introdúcelo en Ajustes.')
   if (!isOnline(options)) throw new AiError('network', 'Sin conexión.')
 
@@ -58,7 +64,7 @@ export async function callAi(payload: EnrichPayloadInput, options: RequestOption
     response = await (options.fetchImpl ?? fetch)('/api/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-app-secret': options.secret },
-      body: JSON.stringify({ action: 'enrich', payload }),
+      body: JSON.stringify({ action, payload }),
       signal: controller.signal,
     })
   } catch (error) {
@@ -76,10 +82,27 @@ export async function callAi(payload: EnrichPayloadInput, options: RequestOption
     if (failure.success) throw new AiError(failure.data.error.code, failure.data.error.message)
     throw new AiError('upstream', `El servidor ha respondido con un error (HTTP ${response.status}).`)
   }
+  return body
+}
 
-  const parsed = EnrichResponseSchema.safeParse(body)
+export async function callAi(payload: EnrichPayloadInput, options: RequestOptions): Promise<EnrichResponse> {
+  const parsed = EnrichResponseSchema.safeParse(await postAi('enrich', payload, options))
   if (!parsed.success) throw new AiError('invalid_output', 'La respuesta de la IA no es válida.')
   return parsed.data
+}
+
+/**
+ * A micro-story with the given words (spec §13). The words are found again in the text here, on the device,
+ * instead of trusting the positions the model counted (risk R12), and the story is refused when too few are left.
+ */
+export async function requestStory(payload: StoryPayloadInput, options: RequestOptions): Promise<StoryOutput> {
+  const parsed = StoryResponseSchema.safeParse(await postAi('story', payload, options))
+  if (!parsed.success) throw new AiError('invalid_output', 'La respuesta de la IA no es válida.')
+  const story = normalizeStory(parsed.data.data, payload.words)
+  if (!story.textEn || story.targets.length < storyTargetsNeeded(payload.words.length)) {
+    throw new AiError('invalid_output', 'La historia no usa las palabras pedidas.')
+  }
+  return story
 }
 
 /** Full dictionary entry for a word, with the sense used in its context sentence first. */

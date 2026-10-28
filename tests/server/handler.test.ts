@@ -105,11 +105,11 @@ describe('POST /api/ai: validation', () => {
     expect((await errorOf(response)).message).toMatch(/demasiado grande/)
   })
 
-  it('rejects an unknown action and answers 501 for story (phase 8)', async () => {
+  it('rejects an unknown action, and a story without words (the story itself is tested in story.test.ts)', async () => {
     expect((await errorOf(await handleAiRequest(post({ action: 'translate', payload: {} }), deps().value))).code).toBe('bad_request')
     expect(await errorOf(await handleAiRequest(post({ action: 'story', payload: {} }), deps().value))).toMatchObject({
-      status: 501,
-      code: 'not_implemented',
+      status: 400,
+      code: 'bad_request',
     })
   })
 })

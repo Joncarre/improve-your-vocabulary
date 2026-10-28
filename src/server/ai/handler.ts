@@ -1,8 +1,18 @@
-import { AI_ERROR_CODES, AI_LIMITS, AiRequestSchema, DEFAULT_AI_MODEL, EnrichPayloadSchema, type AiErrorCode } from '../../shared/index.js'
+import {
+  AI_ERROR_CODES,
+  AI_LIMITS,
+  AiRequestSchema,
+  DEFAULT_AI_MODEL,
+  EnrichPayloadSchema,
+  STORY_WORDS,
+  StoryPayloadSchema,
+  type AiErrorCode,
+} from '../../shared/index.js'
 import { secretsMatch } from '../auth.js'
 import { createAnthropicCall } from './anthropic.js'
 import { runAi, type StructuredCall } from './enrich.js'
 import { AiFailure } from './errors.js'
+import { runStory } from './story.js'
 
 export interface AiEnv {
   APP_SECRET?: string | undefined
@@ -44,6 +54,18 @@ function describeInvalidPayload(issuePath: PropertyKey[]): string {
   }
 }
 
+function describeInvalidStoryPayload(issuePath: PropertyKey[]): string {
+  const [field] = issuePath
+  switch (field) {
+    case 'words':
+      return `La lista de palabras debe tener entre ${STORY_WORDS.min} y ${STORY_WORDS.max} elementos, cada uno de no más de ${AI_LIMITS.wordMax} caracteres.`
+    case 'level':
+      return 'El nivel debe ser uno de A1, A2, B1, B2, C1 o C2.'
+    default:
+      return 'La petición no es válida.'
+  }
+}
+
 /**
  * POST /api/ai. Order matters: method, then secret (nothing else is looked at without it), then
  * server configuration, then the body.
@@ -69,18 +91,28 @@ export async function handleAiRequest(request: Request, deps: AiHandlerDeps): Pr
 
   const parsed = AiRequestSchema.safeParse(raw)
   if (!parsed.success) return failure(new AiFailure('bad_request'))
-  if (parsed.data.action === 'story') return failure(new AiFailure('not_implemented'))
 
-  const payload = EnrichPayloadSchema.safeParse(parsed.data.payload)
-  if (!payload.success) {
-    const [issue] = payload.error.issues
-    return failure(new AiFailure('bad_request', describeInvalidPayload(issue?.path ?? [])))
+  // Each action checks its own payload; the model call is only built once the request is known to be good.
+  let run: (call: StructuredCall, model: string) => Promise<unknown>
+  if (parsed.data.action === 'story') {
+    const payload = StoryPayloadSchema.safeParse(parsed.data.payload)
+    if (!payload.success) {
+      const [issue] = payload.error.issues
+      return failure(new AiFailure('bad_request', describeInvalidStoryPayload(issue?.path ?? [])))
+    }
+    run = (call, model) => runStory(payload.data, call, model)
+  } else {
+    const payload = EnrichPayloadSchema.safeParse(parsed.data.payload)
+    if (!payload.success) {
+      const [issue] = payload.error.issues
+      return failure(new AiFailure('bad_request', describeInvalidPayload(issue?.path ?? [])))
+    }
+    run = (call, model) => runAi(payload.data, call, model)
   }
 
   try {
     const model = env.ANTHROPIC_MODEL || DEFAULT_AI_MODEL
-    const call = deps.createCall(env.ANTHROPIC_API_KEY, model)
-    return json(200, await runAi(payload.data, call, model))
+    return json(200, await run(deps.createCall(env.ANTHROPIC_API_KEY, model), model))
   } catch (error) {
     if (error instanceof AiFailure) return failure(error)
     // Never echo unexpected error details to the client.

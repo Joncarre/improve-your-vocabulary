@@ -282,6 +282,8 @@ export const StorySchema = z.object({
   entryIds: z.array(z.string()),
   level: z.string(),
   createdAt: timestamp,
+  /** When the gaps were completed: a story without it is still waiting to be played, and is used before asking for another. */
+  playedAt: timestamp.optional(),
   ...syncFields,
 })
 export type Story = z.infer<typeof StorySchema>

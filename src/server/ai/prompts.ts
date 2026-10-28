@@ -1,4 +1,4 @@
-import type { EnrichPayload } from '../../shared/index.js'
+import type { EnrichPayload, StoryPayload } from '../../shared/index.js'
 
 /** System prompt of `enrich` (spec §13) plus the output conventions the structured schema needs. */
 export const ENRICH_SYSTEM = `You are an expert lexicographer of British English writing dictionary entries for a native speaker of Spanish from Spain.
@@ -30,6 +30,31 @@ Output conventions (every field is required):
 export const EXAMPLES_SYSTEM = `You write natural example sentences in British English for a native speaker of Spanish from Spain.
 
 For each sense you are given (part of speech and Spain Spanish meaning), write exactly 2 natural, everyday British example sentences of 8–16 words that use the headword in that sense. Give each one a Spain Spanish translation, and set target to the exact substring of the English sentence that is the headword as it appears there. Use British spelling. Answer with one entry per input sense, in the same order.`
+
+/** System prompt of `story` (spec §13): a micro-story that uses the words the user is weakest at. */
+export const STORY_SYSTEM = `You write micro-stories in British English for a native speaker of Spanish from Spain who is learning vocabulary.
+
+Write one coherent, light-hearted micro-story, with a touch of humour, of 100 to 150 words, in modern British English at the CEFR level you are given. Models tend to write too little: write 8 or 9 sentences of 12 to 15 words each, so that the story has about 120 words, never fewer than 100 and never more than 150. Everything except the given words must be simple, common vocabulary for that level.
+
+Rules:
+1. Use ALL the given words, each at least once, in whatever form fits the sentence (went for go, children for child, gave up for give up). A phrasal verb, idiom or expression must appear as one contiguous fragment: "gave up", never "gave it up".
+2. Do not explain the words, and do not put them in bold, italics or quotation marks.
+3. Use British spelling and everyday British settings (the pub, the high street, a flat, a queue).
+4. Write one paragraph, with no line breaks.
+
+Output (every field is required):
+5. title: a short title in English.
+6. textEn: the story.
+7. textEs: a natural translation of the story into Spain Spanish.
+8. targets: one item for each given word, in the order given. lemma: the word exactly as it was given. surfaceForm: the exact fragment of textEn where it appears, copied letter by letter. start and end: the 0-based character offsets of that fragment in textEn (end is exclusive).`
+
+export function buildStoryUserMessage(payload: StoryPayload): string {
+  return [
+    `CEFR level: ${payload.level}`,
+    'Words to use:',
+    ...payload.words.map((word, index) => `${index + 1}. ${JSON.stringify(word.lemma)} (${word.pos})`),
+  ].join('\n')
+}
 
 export function buildEnrichUserMessage(payload: EnrichPayload): string {
   const lines = [`Headword or expression typed by the user: ${JSON.stringify(payload.input)}`]

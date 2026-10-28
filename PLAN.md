@@ -1,6 +1,6 @@
 # PLAN — App de vocabulario en inglés británico (PWA personal)
 
-> **Estado:** Fase 7 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1 a 7) y la subida real a Neon (👤 pulsar «Sincronizar ahora» en el PC) · esperando tu confirmación para la Fase 8
+> **Estado:** Fase 8 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1 a 8) · esperando tu confirmación para la Fase 9
 > **Última actualización:** 2026-10-28
 
 **Leyenda:** `[ ]` pendiente · `[x]` hecho · **✅** criterio de aceptación del documento · 🤖 lo verifico yo (tests, capturas, Lighthouse) · 📱 lo compruebas tú en el iPhone real · 👤 acción tuya (cuentas, paneles, claves)
@@ -32,7 +32,7 @@
 | 5 | Repaso (FSRS) | hecha; faltan las comprobaciones en el iPhone |
 | 6 | Sincronización y copias | hecha; Neon ya conectado: falta la primera subida real (👤) y las comprobaciones en el iPhone |
 | 7 | Juegos I: Parejas, Huecos, Formas verbales, Familias | hecha; faltan las comprobaciones en el iPhone |
-| 8 | Juegos II: Dictado, Conexiones, Historia | pendiente |
+| 8 | Juegos II: Dictado, Conexiones, Historia | hecha; faltan las comprobaciones en el iPhone |
 | 9 | Progreso y pulido final | pendiente |
 
 ## 3. Cierre de fase (checklist común a las fases 1–9)
@@ -250,7 +250,7 @@
 **6a · Sincronización iPhone ↔ PC**
 - [x] (docs) Neon (driver HTTP 1.x) y Vercel Functions
 - [x] 👤 Añadir Neon desde el Marketplace de Vercel (región de Frankfurt; crea `DATABASE_URL`) y comprobar que `APP_SECRET` está en Vercel · hecho: `/api/sync` crea la tabla `records` y responde `pull` vacío en producción (comprobado el 2026-10-28)
-- [ ] 👤 Primera subida real: abrir la app en el PC y pulsar «Sincronizar ahora» en Ajustes; luego compruebo que los registros están en Neon (la sentencia de subida `INSERT … ON CONFLICT` solo se ha ejecutado contra PGlite)
+- [x] 👤 Primera subida real: hecha por ti; comprobado el 2026-10-28 con una lectura de solo lectura de `/api/sync`: llegaron 3 palabras, 6 tarjetas y 1 tema (ids reales, nada de las pruebas), así que el `INSERT … ON CONFLICT` funciona contra Neon real
 - [x] Tabla `records` con índice por `seq` (B11) · SQL en `src/server/sync/sqlStore.ts` (`schemaStatements`); 🤖 probado con PGlite (Postgres real compilado a WebAssembly) y, en Neon real, la creación de la tabla y la lectura (`pull`); la subida se verá con la primera sincronización
 - [x] `api/sync.ts`: autenticación; *push* (*upsert* solo si el `updated_at` entrante es mayor, `seq` nuevo en cada cambio, lotes ≤ 500 registros y ≤ ~1 MB); *pull* (`seq` mayor que el cursor, paginado); validación con Zod
 - [x] Núcleo puro de fusión, comprobable sin base de datos
@@ -287,14 +287,14 @@
 
 ### Fase 8 — Juegos II
 
-- [ ] Dictado: suena la palabra en RP y luego una frase corta; repetir y lento; ortografía británica estricta (B12) (mín. 5 palabras)
-- [ ] Conexiones: generador local con 6 tipos de vínculo (tema, fuente, tipo de palabra, familia, sinónimos, patrón verbal); garantía de que ninguna palabra encaja en dos grupos; 4 vidas; cada grupo resuelto revela su vínculo con un color (mín. 16 palabras que formen 4 grupos válidos)
-- [ ] Historia: acción `story` en `/api/ai` (esquema Zod y prompt); selección de 6–8 de mis palabras más débiles; lectura y audio con palabras pulsables; versión con huecos y banco de palabras; requiere conexión; los índices de `targets` se recalculan en el cliente (R12); se guarda en `stories` y se reutiliza antes de pedir otra
-- [ ] Tests: Conexiones sin ambigüedad (muchas semillas y datos sintéticos), validación y recálculo de `targets`, generación de huecos
+- [x] Dictado: suena la palabra en RP y luego una frase corta; repetir y lento; ortografía británica estricta (B12) (mín. 5 palabras)
+- [x] Conexiones: generador local con 6 tipos de vínculo (tema, fuente, tipo de palabra, familia, sinónimos, patrón verbal); garantía de que ninguna palabra encaja en dos grupos; 4 vidas; cada grupo resuelto revela su vínculo con un color (mín. 16 palabras que formen 4 grupos válidos)
+- [x] Historia: acción `story` en `/api/ai` (esquema Zod y prompt); selección de 6–8 de mis palabras más débiles; lectura y audio con palabras pulsables; versión con huecos y banco de palabras; requiere conexión; los índices de `targets` se recalculan en el cliente (R12); se guarda en `stories` y se reutiliza antes de pedir otra
+- [x] Tests: Conexiones sin ambigüedad (muchas semillas y datos sintéticos), validación y recálculo de `targets`, generación de huecos
 
 **Criterios de aceptación**
-- [ ] ✅ 🤖 Los grupos de Conexiones no tienen ambigüedad
-- [ ] ✅ 🤖📱 La historia generada se guarda y no se vuelve a pedir
+- [x] ✅ 🤖 Los grupos de Conexiones no tienen ambigüedad (la garantía es por construcción y hay tests con 120 colecciones aleatorias, 60 semillas con una palabra que encaja en dos temas y casos sin solución que no abren el juego)
+- [ ] ✅ 🤖📱 La historia generada se guarda y no se vuelve a pedir (🤖 comprobado: se guarda al llegar, se reutiliza la que está sin jugar y una jugada pide otra nueva, con el modelo real y con respuestas simuladas; falta el iPhone real: lectura en voz alta frase a frase y pulsar palabras)
 
 ### Fase 9 — Progreso y pulido final
 

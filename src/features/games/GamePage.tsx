@@ -24,6 +24,8 @@ import { useGameScope } from './useGameScope.ts'
 interface Run {
   words: GamePlayProps['words']
   pool: GamePlayProps['pool']
+  topics: GamePlayProps['topics']
+  sources: GamePlayProps['sources']
   turns: GamePlayProps['turns']
   pick: PickOptions
   dayStartHour: number
@@ -95,6 +97,8 @@ export default function GamePage() {
       run: {
         words,
         pool: source.words.map((word) => word.entry),
+        topics: source.topics,
+        sources: source.sources,
         turns,
         pick: {
           now: Date.now(),
@@ -160,6 +164,8 @@ export default function GamePage() {
         <Game
           words={phase.run.words}
           pool={phase.run.pool}
+          topics={phase.run.topics}
+          sources={phase.run.sources}
           turns={phase.run.turns}
           variant={variant}
           pick={phase.run.pick}
@@ -189,7 +195,7 @@ export default function GamePage() {
 
   if (data === undefined) return <PageSkeleton />
 
-  const found = availability(info, inScope, variant)
+  const found = availability(info, inScope, variant, data)
   const choose = (value: string) => {
     setVariant(value)
     saveVariant(info.id, value)
@@ -238,6 +244,7 @@ export default function GamePage() {
           </p>
         ) : null}
         {scope.kind === 'focus' ? <p>Las palabras que has fallado van primero y otras que ya conoces completan la partida.</p> : null}
+        {info.needsConnection ? <p>Una historia nueva se escribe con la IA y necesita conexión. Si tienes una sin jugar, se usa esa y no se gasta nada.</p> : null}
       </section>
 
       <div className="mt-5">

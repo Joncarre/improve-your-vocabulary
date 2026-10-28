@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { AiError, callAi, requestEnrich } from '../../src/ai/client.ts'
+import { AiError, callAi, requestEnrich, requestStory } from '../../src/ai/client.ts'
 import { makeEnrichOutput } from '../factories.ts'
 
 const meta = { model: 'claude-haiku-5-5', ms: 4000, inputTokens: 3500, outputTokens: 900 }
@@ -122,5 +122,51 @@ describe('failures', () => {
     controller.abort()
 
     await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+  })
+})
+
+describe('requestStory', () => {
+  const words = [
+    { lemma: 'give up', pos: 'phrasal_verb' as const },
+    { lemma: 'queue', pos: 'noun' as const },
+    { lemma: 'go', pos: 'verb' as const },
+    { lemma: 'pint', pos: 'noun' as const },
+    { lemma: 'brilliant', pos: 'adjective' as const },
+    { lemma: 'leave', pos: 'verb' as const },
+  ]
+  const textEn = 'Tom gave up on the queue and went to the pub. He ordered a pint. It was brilliant, and he left happy.'
+  const word = (lemma: string, surfaceForm: string, start = 0, end = 0) => ({ lemma, surfaceForm, start, end })
+  const body = (targets: ReturnType<typeof word>[]) => ({ ok: true, data: { title: 'A Pint', textEn, textEs: 'Un cuento.', targets }, meta })
+  const all = [word('give up', 'gave up'), word('queue', 'queue'), word('go', 'went'), word('pint', 'pint'), word('brilliant', 'brilliant'), word('leave', 'left')]
+
+  it('posts the words with the action "story" and finds each one again in the text, whatever the model counted', async () => {
+    const fetchImpl = respond(200, body(all.map((item) => ({ ...item, start: 900, end: 905 }))))
+    const story = await requestStory({ words, level: 'B1' }, { ...base, fetchImpl })
+
+    const [url, init] = fetchImpl.mock.calls[0] ?? []
+    expect(url).toBe('/api/ai')
+    expect(new Headers(init?.headers).get('x-app-secret')).toBe('my-secret')
+    expect(JSON.parse(String(init?.body))).toEqual({ action: 'story', payload: { words, level: 'B1' } })
+    expect(story.targets.map((item) => story.textEn.slice(item.start, item.end))).toEqual(['gave up', 'queue', 'went', 'pint', 'brilliant', 'left'])
+  })
+
+  it('refuses a story that does not use enough of the words (a second try is up to the person)', async () => {
+    const error = await requestStory({ words, level: 'B1' }, { ...base, fetchImpl: respond(200, body(all.slice(0, 3))) }).catch((caught: unknown) => caught)
+    expect(error).toBeInstanceOf(AiError)
+    expect(error).toMatchObject({ code: 'invalid_output', retryable: true })
+  })
+
+  it('refuses an answer that is not a story, and keeps the server messages', async () => {
+    const wrong = await requestStory({ words, level: 'B1' }, { ...base, fetchImpl: respond(200, { ok: true, mode: 'full', data: {}, meta }) }).catch((caught: unknown) => caught)
+    expect(wrong).toMatchObject({ code: 'invalid_output' })
+    const refused = await requestStory({ words, level: 'B1' }, { ...base, fetchImpl: respond(402, { ok: false, error: { code: 'billing', message: 'Sin saldo' } }) }).catch((caught: unknown) => caught)
+    expect(refused).toMatchObject({ code: 'billing', message: 'Sin saldo', retryable: false })
+  })
+
+  it('does not even try without the secret or without a connection', async () => {
+    const fetchImpl = respond(200, body(all))
+    await expect(requestStory({ words }, { secret: '', fetchImpl })).rejects.toMatchObject({ code: 'unauthorized' })
+    await expect(requestStory({ words }, { ...base, online: false, fetchImpl })).rejects.toMatchObject({ code: 'network' })
+    expect(fetchImpl).not.toHaveBeenCalled()
   })
 })

@@ -1,4 +1,5 @@
 import { db } from '../../db/db.ts'
+import { listActive } from '../../db/repo.ts'
 import { suggestGame, type GameSuggestion } from '../../games/suggestion.ts'
 import { buildWords } from '../../games/words.ts'
 import { computeStreak, estimateMinutes, type Streak } from '../../srs/streak.ts'
@@ -31,9 +32,11 @@ export async function loadToday(now = Date.now()): Promise<TodayData> {
   const queue = queueFromSnapshot(snapshot, now)
   const { dayStartHour } = snapshot.shared
 
-  const [recentLogs, answered] = await Promise.all([
+  const [recentLogs, answered, topics, sources] = await Promise.all([
     db.logs.orderBy('at').reverse().limit(200).toArray(),
     db.logs.where('at').above(now - STREAK_LOOKBACK_DAYS * DAY).toArray(),
+    listActive('topics'),
+    listActive('sources'),
   ])
   const total = queue.counts.learning + queue.counts.review + queue.counts.new
   const entries = snapshot.entries.filter((entry) => entry.status !== 'archived')
@@ -47,6 +50,6 @@ export async function loadToday(now = Date.now()): Promise<TodayData> {
     leeches: entries.filter((entry) => entry.isLeech).length,
     pending: entries.filter((entry) => entry.status === 'pending_ai').length,
     nextDue: pendingCards.length > 0 ? Math.min(...pendingCards.map((card) => card.due)) : null,
-    game: suggestGame(buildWords(snapshot.entries, snapshot.cards), now, dayStartHour),
+    game: suggestGame(buildWords(snapshot.entries, snapshot.cards), now, dayStartHour, { topics, sources }),
   }
 }

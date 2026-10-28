@@ -2,6 +2,7 @@ import { liveQuery } from 'dexie'
 import { useSyncExternalStore } from 'react'
 import { loadDeviceSettings } from '../db/settings.ts'
 import { browserPlayer } from './browserPlayer.ts'
+import type { PlaybackKind } from './player.ts'
 import { pickVoice, cachedVoices } from './voices.ts'
 
 /* Voice and speed come from this device's settings. They are kept in a module variable fed by one
@@ -37,12 +38,16 @@ export interface AudioRequest {
   slow?: boolean
 }
 
-/** Plays a word or sentence (starting a new one stops the previous). Call it directly from a tap handler. */
-export function playAudio(request: AudioRequest, overrides: { rate?: number; voiceURI?: string } = {}): void {
+/**
+ * Plays a word or sentence (starting a new one stops the previous). Call it directly from a tap handler.
+ * The promise resolves when it ends, with what played; `none` means something else took over (or it was stopped),
+ * which is how a caller chaining two sounds knows not to go on.
+ */
+export function playAudio(request: AudioRequest, overrides: { rate?: number; voiceURI?: string } = {}): Promise<PlaybackKind> {
   followSettings()
   const voice = pickVoice(cachedVoices(), overrides.voiceURI ?? voiceSettings.voiceURI)
   setPlaying(request.key)
-  void browserPlayer()
+  return browserPlayer()
     .play({
       text: request.text,
       audioUrl: request.audioUrl,

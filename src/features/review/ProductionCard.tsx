@@ -70,7 +70,7 @@ export function ProductionFront({ model, value, onChange, onSubmit, inputRef }: 
   )
 }
 
-function Diff({ parts, tone }: { parts: DiffPart[]; tone: string }) {
+export function Diff({ parts, tone }: { parts: DiffPart[]; tone: string }) {
   return (
     <>
       {parts.map((part, index) => (

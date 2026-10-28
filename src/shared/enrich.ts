@@ -133,7 +133,7 @@ export const AiErrorResponseSchema = z.object({
 })
 export type AiErrorResponse = z.infer<typeof AiErrorResponseSchema>
 
-const AiMetaSchema = z.object({
+export const AiMetaSchema = z.object({
   model: z.string(),
   ms: z.number(),
   inputTokens: z.number(),

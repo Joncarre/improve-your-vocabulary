@@ -8,4 +8,7 @@ export const GAME_COMPONENTS: Partial<Record<GameId, LazyExoticComponent<Compone
   cloze: lazy(() => import('./cloze/ClozeGame.tsx')),
   verb_forms: lazy(() => import('./verbForms/VerbFormsGame.tsx')),
   family: lazy(() => import('./family/FamilyGame.tsx')),
+  dictation: lazy(() => import('./dictation/DictationGame.tsx')),
+  connections: lazy(() => import('./connections/ConnectionsGame.tsx')),
+  story: lazy(() => import('./story/StoryGame.tsx')),
 }

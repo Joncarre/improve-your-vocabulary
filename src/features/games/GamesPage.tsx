@@ -41,6 +41,7 @@ function GameCard({ info, playable, open, search }: GameCardProps) {
         <span className="flex items-center gap-2">
           <span className="text-section font-semibold">{info.name}</span>
           {info.ready ? null : <Chip tone="other">Próximamente</Chip>}
+          {info.needsConnection ? <Chip tone="other">Con conexión</Chip> : null}
         </span>
         <span className="block text-secondary text-text-2">{info.blurb}</span>
         {info.ready && !open ? (
@@ -100,7 +101,7 @@ export default function GamesPage() {
           ) : null}
           <ul className="grid gap-3 md:grid-cols-2">
             {GAMES.map((info) => {
-              const found = availability(info, inScope, resolveVariant(info, loadVariant(info.id)))
+              const found = availability(info, inScope, resolveVariant(info, loadVariant(info.id)), data)
               return (
                 <li key={info.id}>
                   <GameCard info={info} playable={found.playable} open={found.open} search={search} />

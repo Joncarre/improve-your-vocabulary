@@ -32,7 +32,7 @@ export type StructuredCall = <T>(request: StructuredRequest<T>) => Promise<Struc
 const MAX_TOKENS = 6_000
 const MAX_ATTEMPTS = 2
 
-interface Structured<T> {
+export interface Structured<T> {
   data: T
   inputTokens: number
   outputTokens: number
@@ -42,7 +42,7 @@ interface Structured<T> {
  * Calls the model and validates the answer with Zod, retrying once when it is incomplete or does
  * not match the schema. Refusals are final. Everything the SDK throws becomes an AiFailure.
  */
-async function runStructured<T>(
+export async function runStructured<T>(
   call: StructuredCall,
   request: Omit<StructuredRequest<T>, 'maxTokens'>,
 ): Promise<Structured<T>> {
