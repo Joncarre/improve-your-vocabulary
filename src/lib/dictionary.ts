@@ -115,26 +115,44 @@ export function parseDictionaryResponse(json: unknown): DictionaryResult | null 
   }
 }
 
+export interface LookupOptions {
+  signal?: AbortSignal
+  fetchImpl?: typeof fetch
+  retryDelayMs?: number
+}
+
+/** What a lookup found, telling "the dictionary does not know it" apart from "it could not be reached". */
+export type LookupOutcome =
+  | { kind: 'found'; result: DictionaryResult }
+  | { kind: 'missing' }
+  | { kind: 'unavailable' }
+
 /**
- * Looks a word up; resolves to null when the dictionary does not know it or cannot be reached.
- * It is a free community service that fails now and then, so a network error or a 5xx gets one retry.
+ * Looks a word up. It is a free community service that fails now and then, so a network error or
+ * a 5xx gets one retry before the answer is "unavailable".
  */
-export async function lookupDictionary(
-  word: string,
-  options: { signal?: AbortSignal; fetchImpl?: typeof fetch; retryDelayMs?: number } = {},
-): Promise<DictionaryResult | null> {
+export async function lookupDictionaryOutcome(word: string, options: LookupOptions = {}): Promise<LookupOutcome> {
   const fetchImpl = options.fetchImpl ?? fetch
   const url = `${DICTIONARY_URL}${encodeURIComponent(word.trim().toLowerCase())}`
 
   for (let attempt = 1; attempt <= 2; attempt += 1) {
     try {
       const response = await fetchImpl(url, { ...(options.signal ? { signal: options.signal } : {}) })
-      if (response.ok) return parseDictionaryResponse(await response.json())
-      if (response.status < 500) return null
+      if (response.ok) {
+        const result = parseDictionaryResponse(await response.json())
+        return result ? { kind: 'found', result } : { kind: 'missing' }
+      }
+      if (response.status < 500) return { kind: 'missing' }
     } catch {
-      if (options.signal?.aborted) return null
+      if (options.signal?.aborted) return { kind: 'unavailable' }
     }
     if (attempt === 1) await new Promise((resolve) => setTimeout(resolve, options.retryDelayMs ?? 400))
   }
-  return null
+  return { kind: 'unavailable' }
+}
+
+/** Looks a word up; resolves to null when the dictionary does not know it or cannot be reached. */
+export async function lookupDictionary(word: string, options: LookupOptions = {}): Promise<DictionaryResult | null> {
+  const outcome = await lookupDictionaryOutcome(word, options)
+  return outcome.kind === 'found' ? outcome.result : null
 }

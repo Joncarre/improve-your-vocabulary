@@ -139,6 +139,8 @@ export const EntrySchema = z.object({
   /** British RP between slashes: "/ɡəʊ/". */
   ipa: z.string(),
   audioUrl: z.string().optional(),
+  /** When the free dictionary was last asked for a UK recording, so words without one are not asked again. */
+  audioCheckedAt: timestamp.optional(),
   senses: z.array(SenseSchema),
   forms: FormsSchema.optional(),
   family: z.array(FamilyMemberSchema),

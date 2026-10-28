@@ -1,16 +1,15 @@
 import type { ReactNode } from 'react'
+import { splitHighlight } from '../lib/highlight.ts'
 
-/** Shows `text` with the first occurrence of `target` (any letter case) in the accent colour. */
+/** Shows `text` with the first whole-word occurrence of `target` (any letter case) in the accent colour. */
 export function Highlight({ text, target }: { text: string; target?: string | undefined }): ReactNode {
-  const needle = target?.trim()
-  if (!needle) return text
-  const index = text.toLowerCase().indexOf(needle.toLowerCase())
-  if (index === -1) return text
+  const parts = splitHighlight(text, target)
+  if (!parts) return text
   return (
     <>
-      {text.slice(0, index)}
-      <mark className="bg-transparent font-semibold text-accent">{text.slice(index, index + needle.length)}</mark>
-      {text.slice(index + needle.length)}
+      {parts.before}
+      <mark className="bg-transparent font-semibold text-accent">{parts.match}</mark>
+      {parts.after}
     </>
   )
 }
