@@ -6,6 +6,7 @@ import { InstallGuide } from '../../app/InstallGuide.tsx'
 import { primeSpeech } from '../../audio/speech.ts'
 import { saveDeviceSettings, useDeviceSettings } from '../../db/settings.ts'
 import { useInstallState } from '../../lib/install.ts'
+import { SyncIndicator, SyncStaleBanner } from '../../sync/SyncIndicator.tsx'
 import { Button } from '../../ui/Button.tsx'
 import { ICON_BUTTON_CLASS } from '../../ui/classes.ts'
 import { EmptyState } from '../../ui/EmptyState.tsx'
@@ -127,12 +128,16 @@ export default function TodayPage() {
       <PageHeader
         title="Hoy"
         actions={
-          <Link to="/settings" aria-label="Ajustes" className={ICON_BUTTON_CLASS}>
-            <Settings size={20} strokeWidth={1.75} aria-hidden="true" />
-          </Link>
+          <>
+            <SyncIndicator />
+            <Link to="/settings" aria-label="Ajustes" className={ICON_BUTTON_CLASS}>
+              <Settings size={20} strokeWidth={1.75} aria-hidden="true" />
+            </Link>
+          </>
         }
       />
       <div className="space-y-4">
+        <SyncStaleBanner />
         {showGuide ? <InstallGuide onDismiss={() => void saveDeviceSettings({ installGuideDismissed: true })} /> : null}
 
         {data === undefined ? (

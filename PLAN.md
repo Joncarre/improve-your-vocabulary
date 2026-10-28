@@ -1,6 +1,6 @@
 # PLAN — App de vocabulario en inglés británico (PWA personal)
 
-> **Estado:** Fase 5 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1 a 5) · esperando tu confirmación para la Fase 6
+> **Estado:** Fase 6 hecha salvo la comprobación contra Neon real (👤 falta añadir Neon en Vercel) y las 📱 en el iPhone (fases 1 a 6) · esperando tu confirmación para la Fase 7
 > **Última actualización:** 2026-10-28
 
 **Leyenda:** `[ ]` pendiente · `[x]` hecho · **✅** criterio de aceptación del documento · 🤖 lo verifico yo (tests, capturas, Lighthouse) · 📱 lo compruebas tú en el iPhone real · 👤 acción tuya (cuentas, paneles, claves)
@@ -30,7 +30,7 @@
 | 3 | Ficha y audio | hecha; faltan las comprobaciones en el iPhone |
 | 4 | Vocabulario, temas y fuentes | hecha; faltan las comprobaciones en el iPhone |
 | 5 | Repaso (FSRS) | hecha; faltan las comprobaciones en el iPhone |
-| 6 | Sincronización y copias | pendiente |
+| 6 | Sincronización y copias | hecha; falta añadir Neon (👤) y comprobar contra la base real |
 | 7 | Juegos I: Parejas, Huecos, Formas verbales, Familias | pendiente |
 | 8 | Juegos II: Dictado, Conexiones, Historia | pendiente |
 | 9 | Progreso y pulido final | pendiente |
@@ -248,26 +248,26 @@
 ### Fase 6 — Sincronización y copias
 
 **6a · Sincronización iPhone ↔ PC**
-- [ ] (docs) Neon (driver HTTP 1.x) y Vercel Functions
-- [ ] 👤 Añadir Neon desde el Marketplace de Vercel (región de Frankfurt; crea `DATABASE_URL`) y comprobar que `APP_SECRET` está en Vercel
-- [ ] Tabla `records` con índice por `seq` (B11)
-- [ ] `api/sync.ts`: autenticación; *push* (*upsert* solo si el `updated_at` entrante es mayor, `seq` nuevo en cada cambio, lotes ≤ 500 registros y ≤ ~1 MB); *pull* (`seq` mayor que el cursor, paginado); validación con Zod
-- [ ] Núcleo puro de fusión, comprobable sin base de datos
-- [ ] Cliente `src/sync/`: *push* desde `outbox` (solo se vacía lo que no cambió durante el envío), *pull* con cursor en `deviceSettings` y solape pequeño (R5), aplicación local por última escritura sin re-encolar, `logs` solo añaden, primera sincronización completa (re-encola todo lo local)
-- [ ] Disparadores: al abrir y al volver (`visibilitychange`), ~5 s tras un cambio (*debounce*), cada 5 min y botón «Sincronizar ahora»; un solo ciclo a la vez
-- [ ] Indicador discreto (sincronizado · pendiente · sin conexión · error) en Hoy y Ajustes; banner si pasan más de 7 días sin sincronizar
-- [ ] Documentar en `DECISIONS.md` cómo se resuelven los conflictos
+- [x] (docs) Neon (driver HTTP 1.x) y Vercel Functions
+- [ ] 👤 Añadir Neon desde el Marketplace de Vercel (región de Frankfurt; crea `DATABASE_URL`) y comprobar que `APP_SECRET` está en Vercel · hasta entonces `/api/sync` responde «falta la base de datos» y la app lo muestra como error de sincronización
+- [x] Tabla `records` con índice por `seq` (B11) · SQL en `src/server/sync/sqlStore.ts` (`schemaStatements`); 🤖 probado con PGlite (Postgres real compilado a WebAssembly); falta probarlo contra Neon (lo hago en cuanto exista `DATABASE_URL`)
+- [x] `api/sync.ts`: autenticación; *push* (*upsert* solo si el `updated_at` entrante es mayor, `seq` nuevo en cada cambio, lotes ≤ 500 registros y ≤ ~1 MB); *pull* (`seq` mayor que el cursor, paginado); validación con Zod
+- [x] Núcleo puro de fusión, comprobable sin base de datos
+- [x] Cliente `src/sync/`: *push* desde `outbox` (solo se vacía lo que no cambió durante el envío), *pull* con cursor en `deviceSettings` y solape pequeño (R5), aplicación local por última escritura sin re-encolar, `logs` solo añaden, primera sincronización completa (re-encola todo lo local)
+- [x] Disparadores: al abrir y al volver (`visibilitychange`), ~5 s tras un cambio (*debounce*), cada 5 min y botón «Sincronizar ahora»; un solo ciclo a la vez
+- [x] Indicador discreto (sincronizado · pendiente · sin conexión · error) en Hoy y Ajustes; banner si pasan más de 7 días sin sincronizar
+- [x] Documentar en `DECISIONS.md` cómo se resuelven los conflictos
 
 **6b · Copias de seguridad**
-- [ ] Exportar JSON (`schemaVersion`, `exportedAt` y todas las tablas) con Web Share API (`File`) o descarga directa
-- [ ] Importar: validación con Zod, vista previa de recuentos, **Fusionar** (por `id`; gana el `updatedAt` mayor) y **Reemplazar todo** (con confirmación; B10)
-- [ ] Ajustes: almacenamiento persistente concedido o no, estimación, estado de la sincronización y secreto
-- [ ] Tests: conflicto resuelto por última escritura, borrado lógico propagado, *outbox*, cursor y paginación, ida y vuelta exportar → borrar → importar
+- [x] Exportar JSON (`schemaVersion`, `exportedAt` y todas las tablas) con Web Share API (`File`) o descarga directa
+- [x] Importar: validación con Zod, vista previa de recuentos, **Fusionar** (por `id`; gana el `updatedAt` mayor) y **Reemplazar todo** (con confirmación; B10)
+- [x] Ajustes: almacenamiento persistente concedido o no, estimación, estado de la sincronización y secreto (secciones «Acceso», «Sincronización», «Copia de seguridad» y «Almacenamiento»)
+- [x] Tests: conflicto resuelto por última escritura, borrado lógico propagado, *outbox*, cursor y paginación, ida y vuelta exportar → borrar → importar
 
 **Criterios de aceptación**
-- [ ] ✅ 📱 Añado una palabra en el iPhone y aparece en el PC en menos de un minuto tras abrir la app
-- [ ] ✅ 📱 Repaso sin conexión en el iPhone y, al volver la conexión, se sincroniza sin perder registros
-- [ ] ✅ 🤖 Tests: última escritura, borrado lógico propagado y exportar → borrar → importar
+- [ ] ✅ 📱 (🤖 comprobado con dos dispositivos simulados: WebKit móvil y Chromium de escritorio contra el manejador real de `/api/sync`) Añado una palabra en el iPhone y aparece en el PC en menos de un minuto tras abrir la app
+- [ ] ✅ 📱 (🤖 comprobado sin conexión → con conexión en WebKit) Repaso sin conexión en el iPhone y, al volver la conexión, se sincroniza sin perder registros
+- [x] ✅ 🤖 Tests: última escritura, borrado lógico propagado y exportar → borrar → importar
 
 ### Fase 7 — Juegos I
 

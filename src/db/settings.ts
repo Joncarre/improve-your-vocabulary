@@ -36,21 +36,32 @@ export async function loadSharedSettings(): Promise<SharedSettings> {
   return withSharedDefaults(await db.sharedSettings.get('shared'))
 }
 
-/** Shared settings are synced, so saving them goes through the outbox. */
+/**
+ * Shared settings are synced, so saving them goes through the outbox. Read and write happen in one
+ * transaction: two saves at once (or a save while the sync applies the server's copy) cannot undo each other.
+ */
 export async function saveSharedSettings(patch: Partial<SharedValues>): Promise<SharedSettings> {
-  const current = await loadSharedSettings()
-  return writeRecord('sharedSettings', { ...current, ...patch })
+  return db.transaction('rw', db.sharedSettings, db.outbox, async () => {
+    const current = await loadSharedSettings()
+    return writeRecord('sharedSettings', { ...current, ...patch })
+  })
 }
 
 export async function loadDeviceSettings(): Promise<DeviceSettings> {
   return withDeviceDefaults(await db.deviceSettings.get('device'))
 }
 
-/** Device settings never leave this device: no outbox. */
+/**
+ * Device settings never leave this device: no outbox. Read and write happen in one transaction,
+ * because several places save a field of the same record (the settings screen, the sync cursor):
+ * without it a save could bring back the old value of a field another one had just changed.
+ */
 export async function saveDeviceSettings(patch: Partial<DeviceValues>): Promise<DeviceSettings> {
-  const next = { ...(await loadDeviceSettings()), ...patch }
-  await db.deviceSettings.put(next)
-  return next
+  return db.transaction('rw', db.deviceSettings, async () => {
+    const next = { ...(await loadDeviceSettings()), ...patch }
+    await db.deviceSettings.put(next)
+    return next
+  })
 }
 
 export interface SettingsState<T> {

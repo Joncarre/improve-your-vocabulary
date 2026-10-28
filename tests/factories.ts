@@ -1,5 +1,5 @@
 import { newId } from '../src/lib/id.ts'
-import type { Card, Entry, EnrichOutput, Topic } from '../src/shared/index.ts'
+import type { Card, Entry, EnrichOutput, ReviewLog, Source, Topic } from '../src/shared/index.ts'
 
 /** A realistic model answer for "went" in "We went to the pub after work." */
 export function makeEnrichOutput(overrides: Partial<EnrichOutput> = {}): EnrichOutput {
@@ -123,4 +123,23 @@ export function makeCard(overrides: Partial<Card> = {}): Card {
     updatedAt: 1,
     ...overrides,
   }
+}
+
+export function makeLog(overrides: Partial<ReviewLog> = {}): ReviewLog {
+  return {
+    id: newId(),
+    cardId: newId(),
+    entryId: newId(),
+    at: 1_000,
+    origin: 'review',
+    rating: 3,
+    correct: true,
+    ms: 4_000,
+    updatedAt: 1_000,
+    ...overrides,
+  }
+}
+
+export function makeSource(overrides: Partial<Source> = {}): Source {
+  return { id: newId(), title: 'Peaky Blinders', type: 'series', lastUsedAt: 1, updatedAt: 1, ...overrides }
 }

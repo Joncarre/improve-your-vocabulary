@@ -13,6 +13,8 @@ import { IconButton } from '../../ui/Button.tsx'
 import { Chip } from '../../ui/Chip.tsx'
 import { RangeField, SelectField, SettingRow, SettingsSection, Stepper, Switch } from '../../ui/controls.tsx'
 import { PageHeader } from '../../ui/PageHeader.tsx'
+import { BackupSection } from './BackupSection.tsx'
+import { SyncSection } from './SyncSection.tsx'
 import { VoiceSettings } from './VoiceSettings.tsx'
 
 // Test data tools: removed from the production build together with this branch.
@@ -153,6 +155,10 @@ export default function SettingsPage() {
           </div>
         </div>
       </SettingsSection>
+
+      <SyncSection />
+
+      <BackupSection />
 
       <SettingsSection title="Almacenamiento">
         <SettingRow label="Almacenamiento persistente" description="Evita que el sistema borre tus datos">

@@ -70,3 +70,21 @@ describe('device settings (never synced)', () => {
     expect(await db.outbox.count()).toBe(0)
   })
 })
+
+describe('saves made at the same time', () => {
+  it('device settings: none of the changes is lost', async () => {
+    await Promise.all([
+      saveDeviceSettings({ appSecret: 'right' }),
+      saveDeviceSettings({ lastSyncAt: 5 }),
+      saveDeviceSettings({ voiceRate: 1.1 }),
+      saveDeviceSettings({ syncCursor: 9 }),
+    ])
+    expect(await loadDeviceSettings()).toMatchObject({ appSecret: 'right', lastSyncAt: 5, voiceRate: 1.1, syncCursor: 9 })
+  })
+
+  it('shared settings: none of the changes is lost, and each one is queued', async () => {
+    await Promise.all([saveSharedSettings({ newPerDay: 3 }), saveSharedSettings({ dayStartHour: 5 }), saveSharedSettings({ productionEnabled: false })])
+    expect(await loadSharedSettings()).toMatchObject({ newPerDay: 3, dayStartHour: 5, productionEnabled: false })
+    expect(await db.outbox.toArray()).toHaveLength(1)
+  })
+})

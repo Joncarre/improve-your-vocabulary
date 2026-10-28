@@ -158,7 +158,7 @@ export function SelectField({
       aria-label={label}
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="h-10 rounded-control border border-border bg-surface-2 px-3 text-text"
+      className="h-10 max-w-[min(18rem,52vw)] rounded-control border border-border bg-surface-2 px-3 text-text"
     >
       {options.map((option) => (
         <option key={option.value} value={option.value}>
