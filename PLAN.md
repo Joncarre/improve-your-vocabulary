@@ -1,6 +1,6 @@
 # PLAN — App de vocabulario en inglés británico (PWA personal)
 
-> **Estado:** Fase 6 hecha salvo la comprobación contra Neon real (👤 falta añadir Neon en Vercel) y las 📱 en el iPhone (fases 1 a 6) · esperando tu confirmación para la Fase 7
+> **Estado:** Fase 7 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1 a 7) y la subida real a Neon (👤 pulsar «Sincronizar ahora» en el PC) · esperando tu confirmación para la Fase 8
 > **Última actualización:** 2026-10-28
 
 **Leyenda:** `[ ]` pendiente · `[x]` hecho · **✅** criterio de aceptación del documento · 🤖 lo verifico yo (tests, capturas, Lighthouse) · 📱 lo compruebas tú en el iPhone real · 👤 acción tuya (cuentas, paneles, claves)
@@ -30,8 +30,8 @@
 | 3 | Ficha y audio | hecha; faltan las comprobaciones en el iPhone |
 | 4 | Vocabulario, temas y fuentes | hecha; faltan las comprobaciones en el iPhone |
 | 5 | Repaso (FSRS) | hecha; faltan las comprobaciones en el iPhone |
-| 6 | Sincronización y copias | hecha; falta añadir Neon (👤) y comprobar contra la base real |
-| 7 | Juegos I: Parejas, Huecos, Formas verbales, Familias | pendiente |
+| 6 | Sincronización y copias | hecha; Neon ya conectado: falta la primera subida real (👤) y las comprobaciones en el iPhone |
+| 7 | Juegos I: Parejas, Huecos, Formas verbales, Familias | hecha; faltan las comprobaciones en el iPhone |
 | 8 | Juegos II: Dictado, Conexiones, Historia | pendiente |
 | 9 | Progreso y pulido final | pendiente |
 
@@ -249,8 +249,9 @@
 
 **6a · Sincronización iPhone ↔ PC**
 - [x] (docs) Neon (driver HTTP 1.x) y Vercel Functions
-- [ ] 👤 Añadir Neon desde el Marketplace de Vercel (región de Frankfurt; crea `DATABASE_URL`) y comprobar que `APP_SECRET` está en Vercel · hasta entonces `/api/sync` responde «falta la base de datos» y la app lo muestra como error de sincronización
-- [x] Tabla `records` con índice por `seq` (B11) · SQL en `src/server/sync/sqlStore.ts` (`schemaStatements`); 🤖 probado con PGlite (Postgres real compilado a WebAssembly); falta probarlo contra Neon (lo hago en cuanto exista `DATABASE_URL`)
+- [x] 👤 Añadir Neon desde el Marketplace de Vercel (región de Frankfurt; crea `DATABASE_URL`) y comprobar que `APP_SECRET` está en Vercel · hecho: `/api/sync` crea la tabla `records` y responde `pull` vacío en producción (comprobado el 2026-10-28)
+- [ ] 👤 Primera subida real: abrir la app en el PC y pulsar «Sincronizar ahora» en Ajustes; luego compruebo que los registros están en Neon (la sentencia de subida `INSERT … ON CONFLICT` solo se ha ejecutado contra PGlite)
+- [x] Tabla `records` con índice por `seq` (B11) · SQL en `src/server/sync/sqlStore.ts` (`schemaStatements`); 🤖 probado con PGlite (Postgres real compilado a WebAssembly) y, en Neon real, la creación de la tabla y la lectura (`pull`); la subida se verá con la primera sincronización
 - [x] `api/sync.ts`: autenticación; *push* (*upsert* solo si el `updated_at` entrante es mayor, `seq` nuevo en cada cambio, lotes ≤ 500 registros y ≤ ~1 MB); *pull* (`seq` mayor que el cursor, paginado); validación con Zod
 - [x] Núcleo puro de fusión, comprobable sin base de datos
 - [x] Cliente `src/sync/`: *push* desde `outbox` (solo se vacía lo que no cambió durante el envío), *pull* con cursor en `deviceSettings` y solape pequeño (R5), aplicación local por última escritura sin re-encolar, `logs` solo añaden, primera sincronización completa (re-encola todo lo local)
@@ -271,18 +272,18 @@
 
 ### Fase 7 — Juegos I
 
-- [ ] Infraestructura común (§8): pantalla Juegos con carga diferida por juego; alcance (Todo · Tema · Fuente · Rebeldes · Últimas añadidas); selección ponderada (por defecto solo palabras vistas al menos una vez en repaso); 10 rondas o temporizador; registro en `ReviewLog` con `game:<id>` y en `stats`; efecto en el calendario (un fallo adelanta a hoy, un acierto no toca); feedback inmediato con audio; resumen con récord (`GameResult`); bloqueo «Necesitas N palabras para jugar»
-- [ ] Generador reutilizable de distractores (mismo tipo de palabra y, si se puede, mismo tema)
-- [ ] Parejas: cuadrícula 3 × 4; inglés ↔ español, palabra ↔ definición y, en avanzado, palabra ↔ IPA; cronómetro y mejor tiempo (mín. 6 palabras)
-- [ ] Huecos: tu frase original o un ejemplo (rotando entre tus frases y los ejemplos de todas las acepciones); 4 opciones del mismo tipo de palabra; exige la forma correcta; nivel 2 escribiendo (mín. 4)
-- [ ] Formas verbales: irregulares primero; acepta variantes británicas (*learnt/learned*, *spelt/spelled*, *dreamt/dreamed*) (mín. 5 verbos)
-- [ ] Familias: ranuras sustantivo / adjetivo / adverbio o completar frase (mín. 4 entradas con familia)
-- [ ] Enlaces pendientes de fases anteriores: «Jugar con las falladas» (resumen del repaso), «Jugar con esta serie», juego sugerido en Hoy y «Jugar» en Rebeldes
-- [ ] Tests de generadores con aleatoriedad inyectable: distractores del mismo tipo, mínimos de palabras, selección ponderada y efecto en el calendario
+- [x] Infraestructura común (§8; lógica en `src/games/`, pantallas en `src/features/games/`): pantalla Juegos con carga diferida por juego; alcance (Todo · Tema · Fuente · Rebeldes · Últimas añadidas); selección ponderada (por defecto solo palabras vistas al menos una vez en repaso); 10 rondas o temporizador; registro en `ReviewLog` con `game:<id>` y en `stats`; efecto en el calendario (un fallo adelanta a hoy, un acierto no toca); feedback inmediato con audio; resumen con récord (`GameResult`); bloqueo «Necesitas N palabras para jugar»
+- [x] Generador reutilizable de distractores (mismo tipo de palabra y, si se puede, mismo tema)
+- [x] Parejas: cuadrícula 3 × 4; inglés ↔ español, palabra ↔ definición y, en avanzado, palabra ↔ IPA; cronómetro y mejor tiempo (mín. 6 palabras)
+- [x] Huecos: tu frase original o un ejemplo (rotando entre tus frases y los ejemplos de todas las acepciones); 4 opciones del mismo tipo de palabra; exige la forma correcta; nivel 2 escribiendo (mín. 4)
+- [x] Formas verbales: irregulares primero; acepta variantes británicas (*learnt/learned*, *spelt/spelled*, *dreamt/dreamed*) (mín. 5 verbos)
+- [x] Familias: ranuras sustantivo / adjetivo / adverbio o completar frase (mín. 4 entradas con familia)
+- [x] Enlaces pendientes de fases anteriores: «Jugar con las falladas» (resumen del repaso), «Jugar con esta serie», juego sugerido en Hoy y «Jugar» en Rebeldes
+- [x] Tests de generadores con aleatoriedad inyectable: distractores del mismo tipo, mínimos de palabras, selección ponderada y efecto en el calendario
 
 **Criterios de aceptación**
-- [ ] ✅ 🤖 Tests de los generadores: distractores del mismo tipo de palabra y mínimos de palabras
-- [ ] ✅ 🤖📱 Las cuadrículas caben a 375 px de ancho
+- [x] ✅ 🤖 Tests de los generadores: distractores del mismo tipo de palabra y mínimos de palabras
+- [ ] ✅ 🤖📱 Las cuadrículas caben a 375 px de ancho (🤖 comprobado en WebKit a 375 y 320 px y en Chromium a 1280 px: sin recortes ni desbordes, también con textos muy largos; falta verlo en el iPhone real)
 
 ### Fase 8 — Juegos II
 

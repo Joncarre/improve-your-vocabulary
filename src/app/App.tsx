@@ -11,6 +11,7 @@ const PhoneticsPage = lazy(() => import('../features/phonetics/PhoneticsPage.tsx
 const ReviewPage = lazy(() => import('../features/review/ReviewPage.tsx'))
 const LeechesPage = lazy(() => import('../features/review/LeechesPage.tsx'))
 const GamesPage = lazy(() => import('../features/games/GamesPage.tsx'))
+const GamePage = lazy(() => import('../features/games/GamePage.tsx'))
 const ProgressPage = lazy(() => import('../features/progress/ProgressPage.tsx'))
 const SettingsPage = lazy(() => import('../features/settings/SettingsPage.tsx'))
 
@@ -30,6 +31,7 @@ export function App() {
         <Route path="review/series/:id" element={<ReviewPage />} />
         <Route path="leeches" element={<LeechesPage />} />
         <Route path="games" element={<GamesPage />} />
+        <Route path="games/:gameId" element={<GamePage />} />
         <Route path="progress" element={<ProgressPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

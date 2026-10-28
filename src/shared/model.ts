@@ -259,6 +259,8 @@ export const GameResultSchema = z.object({
   score: z.number(),
   total: z.number(),
   durationMs: z.number().nonnegative(),
+  /** Which version of the game was played ("ipa", "type"...): personal records are kept per variant. */
+  variant: z.string().optional(),
   ...syncFields,
 })
 export type GameResult = z.infer<typeof GameResultSchema>

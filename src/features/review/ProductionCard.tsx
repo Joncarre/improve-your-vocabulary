@@ -83,7 +83,7 @@ function Diff({ parts, tone }: { parts: DiffPart[]; tone: string }) {
 }
 
 /** What the comparison said: right, almost (with the letters that differ) or the answer. */
-function Verdict({ result, typed }: { result: CheckResult; typed: string }) {
+export function Verdict({ result, typed }: { result: CheckResult; typed: string }) {
   if (result.verdict === 'empty') return null
   if (result.verdict === 'exact') {
     return <p className="rounded-card border border-good/40 bg-good/10 px-3 py-2 text-body font-medium text-good">¡Correcto!</p>

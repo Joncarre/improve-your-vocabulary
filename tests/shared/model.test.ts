@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 import {
   CardSchema,
   EntrySchema,
+  GameResultSchema,
   OutboxItemSchema,
+  parseSyncRecord,
   ReviewLogSchema,
   SYNC_TABLES,
   SyncTableNameSchema,
@@ -64,6 +66,24 @@ describe('ReviewLogSchema', () => {
   it('only allows ratings 1 to 4', () => {
     expect(ReviewLogSchema.safeParse({ ...log, origin: 'review', rating: 3 }).success).toBe(true)
     expect(ReviewLogSchema.safeParse({ ...log, origin: 'review', rating: 5 }).success).toBe(false)
+  })
+})
+
+describe('GameResultSchema', () => {
+  const result = { id: 'g1', game: 'match', at: 1, score: 5, total: 6, durationMs: 41_000, updatedAt: 1 }
+
+  it('accepts a result with or without the version of the game that was played', () => {
+    expect(GameResultSchema.safeParse(result).success).toBe(true)
+    expect(GameResultSchema.parse({ ...result, variant: 'ipa' }).variant).toBe('ipa')
+  })
+
+  it('keeps the variant through the records that travel to the server and into a backup', () => {
+    const parsed = parseSyncRecord('games', { ...result, variant: 'es' })
+    expect(parsed.ok && parsed.record).toMatchObject({ variant: 'es' })
+  })
+
+  it('rejects an unknown game', () => {
+    expect(GameResultSchema.safeParse({ ...result, game: 'chess' }).success).toBe(false)
   })
 })
 

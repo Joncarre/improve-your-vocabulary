@@ -1,4 +1,6 @@
 import { db } from '../../db/db.ts'
+import { suggestGame, type GameSuggestion } from '../../games/suggestion.ts'
+import { buildWords } from '../../games/words.ts'
 import { computeStreak, estimateMinutes, type Streak } from '../../srs/streak.ts'
 import { isActiveCard } from '../../srs/state.ts'
 import { loadStudySnapshot, queueFromSnapshot } from '../../srs/studyData.ts'
@@ -19,6 +21,8 @@ export interface TodayData {
   pending: number
   /** When the next card falls due, if nothing is due now. */
   nextDue: number | null
+  /** The game Hoy suggests, when one can be played with the words already seen. */
+  game: GameSuggestion | null
 }
 
 /** What the Hoy screen shows, read together so it updates as one. */
@@ -43,5 +47,6 @@ export async function loadToday(now = Date.now()): Promise<TodayData> {
     leeches: entries.filter((entry) => entry.isLeech).length,
     pending: entries.filter((entry) => entry.status === 'pending_ai').length,
     nextDue: pendingCards.length > 0 ? Math.min(...pendingCards.map((card) => card.due)) : null,
+    game: suggestGame(buildWords(snapshot.entries, snapshot.cards), now, dayStartHour),
   }
 }

@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { ChevronRight, Flame, Hourglass, Settings, Sparkles, TriangleAlert } from 'lucide-react'
+import { ChevronRight, Flame, Gamepad2, Hourglass, Settings, Sparkles, TriangleAlert } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { InstallGuide } from '../../app/InstallGuide.tsx'
@@ -162,6 +162,7 @@ export default function TodayPage() {
             <StudyCard data={data} onStart={start} />
             <div className="space-y-3">
               <StreakCard data={data} />
+              {data.game ? <LinkRow to={`/games/${data.game.game}`} icon={Gamepad2} title={`Juego de hoy: ${data.game.name}`} text="Practica con tus palabras más flojas" /> : null}
               {data.leeches > 0 ? (
                 <LinkRow to="/leeches" icon={Flame} title={`Rebeldes (${data.leeches})`} text="Palabras que se te resisten: ejemplos nuevos o archivar" />
               ) : null}

@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { Archive, PartyPopper, Sparkles } from 'lucide-react'
+import { Archive, Gamepad2, PartyPopper, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { AiError } from '../../ai/client.ts'
@@ -8,6 +8,7 @@ import { listActive } from '../../db/repo.ts'
 import { loadDeviceSettings } from '../../db/settings.ts'
 import { BackLink } from '../../ui/BackLink.tsx'
 import { Button } from '../../ui/Button.tsx'
+import { buttonClass } from '../../ui/classes.ts'
 import { EmptyState } from '../../ui/EmptyState.tsx'
 import { showToast } from '../../ui/toastStore.ts'
 import { regenerateExamples, setArchived } from '../entry/actions.ts'
@@ -25,7 +26,7 @@ async function loadLeeches() {
 
 /**
  * "Rebeldes" (spec §7): words that keep slipping away (six lapses). They are not suspended; here you
- * can ask the AI for fresh examples or archive them. "Jugar con ellas" arrives with the games (phase 7).
+ * can ask the AI for fresh examples, archive them or play the games with them.
  */
 export default function LeechesPage() {
   const leeches = useLiveQuery(loadLeeches, [])
@@ -54,6 +55,13 @@ export default function LeechesPage() {
       <BackLink to="/" label="Hoy" />
       <h1 className="mt-2 text-title font-semibold tracking-tight">Rebeldes</h1>
       <p className="mt-1 text-secondary text-text-2">Palabras que has fallado muchas veces en el repaso. Siguen en tu calendario; aquí puedes darles otra oportunidad.</p>
+
+      {leeches && leeches.length > 0 ? (
+        <Link to="/games?scope=leeches" className={buttonClass('primary', 'mt-4 h-12 w-full')}>
+          <Gamepad2 size={18} aria-hidden="true" />
+          Jugar con ellas
+        </Link>
+      ) : null}
 
       <div className="mt-4">
         {leeches === undefined ? null : leeches.length === 0 ? (

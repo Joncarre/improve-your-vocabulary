@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { Clapperboard, SearchX } from 'lucide-react'
+import { Clapperboard, Gamepad2, SearchX } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { BackLink } from '../../ui/BackLink.tsx'
@@ -13,7 +13,7 @@ import { entriesOfSource } from './topics.ts'
 
 /**
  * A series or film with the words found in it (spec §9), with "Repasar esta serie" (an extra review
- * that does not touch the calendar). "Jugar con esta serie" arrives with the games (phase 7).
+ * that does not touch the calendar) and "Jugar con esta serie".
  */
 export default function SourcePage() {
   const { id = '' } = useParams()
@@ -59,9 +59,15 @@ export default function SourcePage() {
       </header>
 
       {rows.length > 0 ? (
-        <Link to={`/review/series/${source.id}`} className={buttonClass('primary', 'mt-4 w-full')}>
-          Repasar esta serie
-        </Link>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <Link to={`/review/series/${source.id}`} className={buttonClass('primary', 'w-full')}>
+            Repasar esta serie
+          </Link>
+          <Link to={`/games?scope=source&id=${source.id}`} className={buttonClass('secondary', 'w-full')}>
+            <Gamepad2 size={18} aria-hidden="true" />
+            Jugar con esta serie
+          </Link>
+        </div>
       ) : null}
 
       <div className="mt-4">

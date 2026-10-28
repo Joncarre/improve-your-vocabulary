@@ -1,6 +1,8 @@
-import { CheckCheck, Coffee } from 'lucide-react'
+import { CheckCheck, Coffee, Gamepad2 } from 'lucide-react'
 import { Link } from 'react-router'
+import { gameSearch, MAX_FOCUS_WORDS } from '../../games/scope.ts'
 import { Button } from '../../ui/Button.tsx'
+import { buttonClass } from '../../ui/classes.ts'
 import { formatDuration } from './lines.ts'
 import { BLOCK_SIZE, type SessionStats } from './useReviewSession.ts'
 
@@ -64,6 +66,13 @@ export function SessionSummary({ phase, stats, remaining, extra, onContinue, onE
                   </li>
                 ))}
               </ul>
+              <Link
+                to={`/games${gameSearch({ kind: 'focus', entryIds: stats.weak.slice(0, MAX_FOCUS_WORDS).map((entry) => entry.id) })}`}
+                className={buttonClass('secondary', 'mt-3 h-12 w-full')}
+              >
+                <Gamepad2 size={18} aria-hidden="true" />
+                Jugar con las falladas
+              </Link>
             </section>
           ) : null}
         </>

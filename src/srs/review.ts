@@ -31,7 +31,7 @@ export interface ReviewInput {
   dayStartHour: number
 }
 
-function updatedStats(card: Card, correct: boolean, at: number): Card['stats'] {
+export function updatedStats(card: Card, correct: boolean, at: number): Card['stats'] {
   return {
     seen: card.stats.seen + 1,
     correct: card.stats.correct + (correct ? 1 : 0),
