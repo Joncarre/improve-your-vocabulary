@@ -14,12 +14,17 @@ const AUTOMATIC = ''
 export function VoiceSettings() {
   const { settings } = useDeviceSettings()
   const playing = usePlayingKey() === TEST_KEY
-  const [voices, setVoices] = useState(() => britishVoices(cachedVoices()))
+  // The list of voices arrives a moment after the page opens: until then the select is not drawn,
+  // so it never flashes "Automática" over the voice that was chosen.
+  const [{ voices, loaded }, setList] = useState(() => {
+    const cached = cachedVoices()
+    return { voices: britishVoices(cached), loaded: cached.length > 0 }
+  })
 
   useEffect(() => {
     let cancelled = false
     void preloadVoices().then((all) => {
-      if (!cancelled) setVoices(britishVoices(all))
+      if (!cancelled) setList({ voices: britishVoices(all), loaded: true })
     })
     return () => {
       cancelled = true
@@ -37,14 +42,22 @@ export function VoiceSettings() {
     <>
       <SettingRow
         label="Voz"
-        description={voices.length === 0 ? 'Este dispositivo no ofrece voces de inglés británico.' : undefined}
+        description={
+          !loaded
+            ? 'Buscando voces…'
+            : voices.length === 0
+              ? 'Este dispositivo no ofrece voces de inglés británico.'
+              : undefined
+        }
       >
-        <SelectField
-          label="Voz"
-          value={chosen ?? AUTOMATIC}
-          options={options}
-          onChange={(voiceURI) => void saveDeviceSettings({ voiceURI })}
-        />
+        {loaded ? (
+          <SelectField
+            label="Voz"
+            value={chosen ?? AUTOMATIC}
+            options={options}
+            onChange={(voiceURI) => void saveDeviceSettings({ voiceURI })}
+          />
+        ) : null}
       </SettingRow>
       <SettingRow label="Probar la voz" description="Usa la velocidad elegida">
         <Button

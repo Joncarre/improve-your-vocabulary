@@ -15,13 +15,13 @@ import { Section, Translation } from './Section.tsx'
 
 export function ContextsSection({ entry, sources }: { entry: Entry; sources: Source[] }) {
   if (entry.contexts.length === 0) return null
-  const sourceTitle = (id: string | undefined) => sources.find((source) => source.id === id)?.title
+  const sourceOf = (id: string | undefined) => sources.find((source) => source.id === id)
 
   return (
     <Section title="Dónde la viste">
       <ul className="space-y-2">
         {entry.contexts.map((context) => {
-          const origin = [sourceTitle(context.sourceId), context.detail].filter(Boolean).join(' · ')
+          const source = sourceOf(context.sourceId)
           return (
             <li key={context.id} className="rounded-card border border-border bg-surface p-3">
               <div className="flex items-start gap-1">
@@ -36,7 +36,17 @@ export function ContextsSection({ entry, sources }: { entry: Entry; sources: Sou
                 />
               </div>
               <Translation text={context.translationEs ?? ''} />
-              {origin ? <p className="mt-1 text-caption text-text-3">{origin}</p> : null}
+              {source || context.detail ? (
+                <p className="mt-1 text-caption text-text-3">
+                  {source ? (
+                    <Link to={`/source/${source.id}`} className="inline-flex min-h-6 items-center text-accent">
+                      {source.title}
+                    </Link>
+                  ) : null}
+                  {source && context.detail ? ' · ' : ''}
+                  {context.detail}
+                </p>
+              ) : null}
             </li>
           )
         })}

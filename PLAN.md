@@ -1,6 +1,6 @@
 # PLAN — App de vocabulario en inglés británico (PWA personal)
 
-> **Estado:** Fase 3 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1, 2 y 3) · esperando tu confirmación para la Fase 4
+> **Estado:** Fase 4 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1 a 4) · esperando tu confirmación para la Fase 5
 > **Última actualización:** 2026-10-28
 
 **Leyenda:** `[ ]` pendiente · `[x]` hecho · **✅** criterio de aceptación del documento · 🤖 lo verifico yo (tests, capturas, Lighthouse) · 📱 lo compruebas tú en el iPhone real · 👤 acción tuya (cuentas, paneles, claves)
@@ -28,7 +28,7 @@
 | 1 | Cimientos y despliegue | hecha y desplegada; faltan las comprobaciones en el iPhone |
 | 2 | Añadir palabras con IA | hecha; faltan las comprobaciones en el iPhone |
 | 3 | Ficha y audio | hecha; faltan las comprobaciones en el iPhone |
-| 4 | Vocabulario, temas y fuentes | pendiente |
+| 4 | Vocabulario, temas y fuentes | hecha; faltan las comprobaciones en el iPhone |
 | 5 | Repaso (FSRS) | pendiente |
 | 6 | Sincronización y copias | pendiente |
 | 7 | Juegos I: Parejas, Huecos, Formas verbales, Familias | pendiente |
@@ -202,17 +202,17 @@
 ### Fase 4 — Vocabulario, temas y fuentes
 
 - [x] Función pura de estado de palabra (nueva, aprendiendo, en repaso, consolidada, dominada; §7) en `src/srs/state.ts`, con tests; la reutiliza la Fase 5 (adelantada en la Fase 3, que la usa en la ficha)
-- [ ] Índice de búsqueda en memoria (sin acentos, inglés y español) alimentado con `useLiveQuery`
-- [ ] Pantalla Vocabulario: filas de ~52 px; vistas Todas / Por tema / Por fuente / Por tipo de palabra; filtros por estado (incluidos pendientes y rebeldes); orden por recientes, alfabético, más falladas y próxima revisión; atajo `/` para buscar
-- [ ] Estados vacíos y esqueletos
-- [ ] Gestión de temas: renombrar, fusionar (reasigna `topicIds` y marca el tema fusionado como borrado), emoji y color de la paleta pastel
-- [ ] Página de fuente (serie o película) con sus palabras; los botones «Repasar» y «Jugar» quedan ocultos hasta las fases 5 y 7
-- [ ] Vista maestro-detalle en escritorio (lista + ficha de la Fase 3)
-- [ ] Semilla de 1.000 entradas de prueba (solo en desarrollo) y test de rendimiento de la búsqueda
-- [ ] Tests: normalización sin acentos, filtros, orden, fusión de temas
+- [x] Índice de búsqueda en memoria (sin acentos, inglés y español) alimentado con `useLiveQuery`; también encuentra por tema, por serie y por la frase donde la viste
+- [x] Pantalla Vocabulario: filas de ~52 px; vistas Todas / Por tema / Por fuente / Por tipo de palabra; filtros por estado (incluidos pendientes y rebeldes); orden por recientes, alfabético, más falladas y próxima revisión; atajo `/` para buscar
+- [x] Estados vacíos y esqueletos
+- [x] Gestión de temas: renombrar, fusionar (reasigna `topicIds` y marca el tema fusionado como borrado), emoji y color de la paleta pastel
+- [x] Página de fuente (serie o película) con sus palabras; los botones «Repasar» y «Jugar» quedan ocultos hasta las fases 5 y 7
+- [x] Vista maestro-detalle en escritorio (lista + ficha de la Fase 3)
+- [x] Semilla de 1.000 entradas de prueba (solo en desarrollo: Ajustes → Desarrollo; 1.000 phrasal verbs en todos los estados) y test de rendimiento de la búsqueda
+- [x] Tests: normalización sin acentos, filtros, orden, fusión de temas
 
 **Criterios de aceptación**
-- [ ] ✅ 🤖 La búsqueda responde al instante con 1.000 palabras de prueba (medido)
+- [x] ✅ 🤖 La búsqueda responde al instante con 1.000 palabras de prueba (medido: índice 9 ms y búsqueda más lenta 1 ms; en el navegador, ~47 ms de la tecla a la lista nueva y 131 ms la primera pintura; la lista dibuja 100 filas y carga más al acercarse al final)
 
 ### Fase 5 — Repaso
 

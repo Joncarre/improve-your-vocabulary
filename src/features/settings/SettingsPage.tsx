@@ -1,5 +1,5 @@
 import { Eye, EyeOff } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { InstallGuide } from '../../app/InstallGuide.tsx'
 import {
   saveDeviceSettings,
@@ -14,6 +14,9 @@ import { Chip } from '../../ui/Chip.tsx'
 import { RangeField, SelectField, SettingRow, SettingsSection, Stepper, Switch } from '../../ui/controls.tsx'
 import { PageHeader } from '../../ui/PageHeader.tsx'
 import { VoiceSettings } from './VoiceSettings.tsx'
+
+// Test data tools: removed from the production build together with this branch.
+const DevTools = import.meta.env.DEV ? lazy(() => import('./DevTools.tsx')) : null
 
 const HOUR_OPTIONS = Array.from({ length: 9 }, (_, hour) => ({
   value: String(hour),
@@ -173,6 +176,12 @@ export default function SettingsPage() {
         <div className="mt-3">
           <InstallGuide />
         </div>
+      ) : null}
+
+      {DevTools ? (
+        <Suspense fallback={null}>
+          <DevTools />
+        </Suspense>
       ) : null}
 
       <SettingsSection title="Diagnóstico tipográfico" note="Sirve para comprobar que el dispositivo dibuja bien la IPA y los colores.">

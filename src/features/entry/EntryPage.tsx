@@ -63,7 +63,7 @@ export default function EntryPage() {
   if (view === null) {
     return (
       <>
-        <BackLink to="/vocabulary" label="Vocabulario" />
+        <BackLink to="/vocabulary" label="Vocabulario" className="lg:hidden" />
         <EmptyState icon={SearchX} title="Esta palabra ya no está">
           Puede que la hayas eliminado desde otro dispositivo.
         </EmptyState>
@@ -81,7 +81,7 @@ export default function EntryPage() {
 
   return (
     <>
-      <BackLink to="/vocabulary" label="Vocabulario" />
+      <BackLink to="/vocabulary" label="Vocabulario" className="lg:hidden" />
       <EntryHeader entry={entry} />
       <ContextsSection entry={entry} sources={sources} />
       <SensesSection entry={entry} />
