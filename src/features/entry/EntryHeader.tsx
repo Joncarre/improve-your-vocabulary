@@ -4,6 +4,7 @@ import { REGISTER_LABEL_ES } from '../../lib/register.ts'
 import type { Entry } from '../../shared/index.ts'
 import { Chip } from '../../ui/Chip.tsx'
 import { SpeakerButton } from '../../ui/SpeakerButton.tsx'
+import { IpaBreakdown } from '../phonetics/IpaBreakdown.tsx'
 
 /** The registers that deserve a visible warning (spec §6). */
 function delicateRegister(entry: Entry): 'slang' | 'offensive' | undefined {
@@ -29,6 +30,7 @@ export function EntryHeader({ entry }: { entry: Entry }) {
         <SpeakerButton id="word" text={entry.lemma} audioUrl={entry.audioUrl} label={`Escuchar «${entry.lemma}»`} />
         <SpeakerButton id="word-slow" text={entry.lemma} audioUrl={entry.audioUrl} slow label={`Escuchar «${entry.lemma}» despacio`} />
       </div>
+      {entry.ipa ? <IpaBreakdown ipa={entry.ipa} idPrefix="entry-ipa" /> : null}
 
       <div className="mt-1 flex flex-wrap items-center gap-1.5">
         {types.map((pos) => (

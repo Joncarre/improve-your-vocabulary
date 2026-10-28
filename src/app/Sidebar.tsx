@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router'
 import { useAddSheet } from '../features/add/addSheetContext.ts'
-import { ADD_ITEM, NAV_ITEMS, SETTINGS_ITEM, type NavItem } from './navigation.ts'
+import { ADD_ITEM, NAV_ITEMS, PHONETICS_ITEM, SETTINGS_ITEM, type NavItem } from './navigation.ts'
 
 function SidebarLink({ item }: { item: NavItem }) {
   const Icon = item.icon
@@ -20,7 +20,7 @@ function SidebarLink({ item }: { item: NavItem }) {
   )
 }
 
-/** Fixed side bar (1024 px and up): Hoy, Vocabulario, Añadir, Juegos, Progreso, Ajustes. */
+/** Fixed side bar (1024 px and up): Hoy, Vocabulario, Añadir, Juegos, Progreso, Pronunciación y Ajustes. */
 export function Sidebar() {
   const { openAdd } = useAddSheet()
   const AddIcon = ADD_ITEM.icon
@@ -45,7 +45,8 @@ export function Sidebar() {
         </button>
         {games ? <SidebarLink item={games} /> : null}
         {progress ? <SidebarLink item={progress} /> : null}
-        <div className="mt-auto">
+        <div className="mt-auto flex flex-col gap-1">
+          <SidebarLink item={PHONETICS_ITEM} />
           <SidebarLink item={SETTINGS_ITEM} />
         </div>
       </nav>

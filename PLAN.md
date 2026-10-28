@@ -189,6 +189,16 @@
 - [ ] ✅ 📱 El audio suena en el iPhone y en el PC (grabación UK si existe; si no, voz `en-GB`) (🤖 comprobado con `speechSynthesis` simulado: todo sale con `lang = en-GB`, la mejor voz británica, 0,95× y 0,7× en «despacio»; el servidor de grabaciones de la Free Dictionary devuelve 502, así que suena la voz del dispositivo)
 - [x] ✅ 🤖📱 La IPA se ve bien en los dos (🤖 comprobado a 375, 320 y 1280 px en Chromium y WebKit; falta verla en el iPhone real)
 
+**3c · Guía de pronunciación para hispanohablantes** *(petición del 2026-10-28, no figuraba en el documento)*
+- [x] Tabla de todos los símbolos de la IPA británica que usa la app (vocales cortas y largas, diptongos, consonantes y marcas de acento y duración): con qué suena en español, un consejo para pronunciarlo y palabras de ejemplo con su IPA que se oyen al tocarlas
+- [x] Sección «Errores típicos de un hispanohablante» con pares que se confunden (*ship/sheep*, *very/berry*, *think/sink*…) y audio
+- [x] Pantalla `/phonetics`, accesible desde Vocabulario, la barra lateral y la ficha
+- [x] En la ficha, «¿Cómo se lee?»: desglosa la IPA de esa palabra símbolo a símbolo con su equivalencia en español
+- [x] Tests: la tabla no tiene símbolos repetidos ni campos vacíos, el desglose reconoce las transcripciones reales (acentos, `ː`, `tʃ`/`dʒ`, variantes `ɛ`/`ɹ`/`g`) y avisa de los símbolos desconocidos
+
+**Criterios de aceptación**
+- [x] ✅ 🤖 Cada símbolo que la IA puede devolver aparece en la tabla (test con 39 transcripciones reales) y el desglose de cualquier ficha reconoce todos sus símbolos (los desconocidos se avisan, no se ocultan)
+
 ### Fase 4 — Vocabulario, temas y fuentes
 
 - [x] Función pura de estado de palabra (nueva, aprendiendo, en repaso, consolidada, dominada; §7) en `src/srs/state.ts`, con tests; la reutiliza la Fase 5 (adelantada en la Fase 3, que la usa en la ficha)
@@ -211,6 +221,8 @@
 - [ ] `src/srs/scheduler.ts`: ajustes → parámetros (retención, fuzz, pasos de 1 y 10 min, reaprendizaje de 10 min), `preview()` con intervalos formateados («10 min», «2 d»), `grade()`, serialización de `FsrsCard` y copia indexable `due`
 - [ ] Día de estudio de 04:00 a 04:00 (inicio, fin y clave), a prueba de cambios de hora
 - [ ] Estados de tarjeta y de entrada (la tarjeta activa más débil; dominada = racha ≥ 5 y estabilidad ≥ 60 d)
+- [ ] **Las palabras no desaparecen** *(petición del 2026-10-28)*: al acertar, el intervalo crece pero nunca pasa de 180 días (`maximum_interval`), también en las dominadas; nada archiva ni borra una palabra salvo tú (test: tras muchos «Fácil» seguidos, el siguiente repaso no pasa de 180 días)
+- [ ] **Ejemplos variados** *(petición del 2026-10-28)*: función pura que elige la frase de cada repaso entre tus frases y los ejemplos de **todas** las acepciones, sin repetir hasta agotarlas; el reverso destaca la acepción de la frase mostrada (test: recorre todas las acepciones y no repite antes de agotar)
 - [ ] Cola del día: aprendizaje vencido, repasos que vencen antes del fin del día (menor *retrievability* primero), nuevas hasta el límite, 1 nueva cada 4 repasos, hermanas (nunca el mismo día), casi sinónimas (B7), bloques de 20 y atasco > 150 (urgentes primero, sin nuevas hasta bajar de 50)
 - [ ] Desbloqueo de la tarjeta de producción (B6) y marca de rebelde a las 6 recaídas (B5)
 - [ ] Comprobador de respuestas: normalización (minúsculas, espacios, apóstrofos tipográficos), variantes UK/US, formas verbales válidas y Damerau-Levenshtein 1 con más de 4 letras → «Difícil»
@@ -219,7 +231,7 @@
 
 **5b · Interfaz de repaso**
 - [ ] Hoy: racha de días, tarjeta principal «X por repasar · Y nuevas · ≈ N min» con **Empezar**, accesos a «Rebeldes (N)» y «Pendientes de completar (N)»; dos columnas en escritorio
-- [ ] Tarjeta de reconocimiento: volteo 3D con muelle (~350 ms), audio automático según ajustes, tu frase en el anverso, reverso con la acepción destacada, formas, un ejemplo y la familia en una línea
+- [ ] Tarjeta de reconocimiento: volteo 3D con muelle (~350 ms), audio automático según ajustes, tu frase en el anverso, reverso con la acepción de la frase mostrada destacada, formas, un ejemplo y la familia en una línea; la frase cambia en cada repaso
 - [ ] Tarjeta de producción: significado, tipo y frase con hueco; campo de texto opcional; valoración sugerida con la diferencia resaltada, que puedo cambiar
 - [ ] 4 botones de valoración con el intervalo previsto; gestos (izquierda = Otra vez, derecha = Bien); atajos de teclado (`Espacio`/`Enter`, `1`–`4`, `Z`, `N`, `/`, `Esc`) con pista discreta
 - [ ] Cada valoración se guarda en una sola transacción: tarjeta, `ReviewLog`, `stats`, `due` y `outbox`
@@ -262,7 +274,7 @@
 - [ ] Infraestructura común (§8): pantalla Juegos con carga diferida por juego; alcance (Todo · Tema · Fuente · Rebeldes · Últimas añadidas); selección ponderada (por defecto solo palabras vistas al menos una vez en repaso); 10 rondas o temporizador; registro en `ReviewLog` con `game:<id>` y en `stats`; efecto en el calendario (un fallo adelanta a hoy, un acierto no toca); feedback inmediato con audio; resumen con récord (`GameResult`); bloqueo «Necesitas N palabras para jugar»
 - [ ] Generador reutilizable de distractores (mismo tipo de palabra y, si se puede, mismo tema)
 - [ ] Parejas: cuadrícula 3 × 4; inglés ↔ español, palabra ↔ definición y, en avanzado, palabra ↔ IPA; cronómetro y mejor tiempo (mín. 6 palabras)
-- [ ] Huecos: tu frase original o un ejemplo; 4 opciones del mismo tipo de palabra; exige la forma correcta; nivel 2 escribiendo (mín. 4)
+- [ ] Huecos: tu frase original o un ejemplo (rotando entre tus frases y los ejemplos de todas las acepciones); 4 opciones del mismo tipo de palabra; exige la forma correcta; nivel 2 escribiendo (mín. 4)
 - [ ] Formas verbales: irregulares primero; acepta variantes británicas (*learnt/learned*, *spelt/spelled*, *dreamt/dreamed*) (mín. 5 verbos)
 - [ ] Familias: ranuras sustantivo / adjetivo / adverbio o completar frase (mín. 4 entradas con familia)
 - [ ] Enlaces pendientes de fases anteriores: «Jugar con las falladas» (resumen del repaso), «Jugar con esta serie», juego sugerido en Hoy y «Jugar» en Rebeldes

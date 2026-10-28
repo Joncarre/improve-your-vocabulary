@@ -1,11 +1,12 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { ChevronLeft, SearchX } from 'lucide-react'
+import { SearchX } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { stopAudio } from '../../audio/useSpeech.ts'
 import { db } from '../../db/db.ts'
 import { getActive, listActive } from '../../db/repo.ts'
 import { normalizeLemmaKey } from '../../lib/lemmaKey.ts'
+import { BackLink } from '../../ui/BackLink.tsx'
 import { buttonClass } from '../../ui/classes.ts'
 import { EmptyState } from '../../ui/EmptyState.tsx'
 import { PageSkeleton } from '../../ui/Skeleton.tsx'
@@ -44,18 +45,6 @@ async function loadEntryView(id: string) {
   }
 }
 
-function BackLink() {
-  return (
-    <Link
-      to="/vocabulary"
-      className="-ml-2 inline-flex min-h-11 items-center gap-0.5 pr-3 pt-[env(safe-area-inset-top)] text-body text-accent"
-    >
-      <ChevronLeft size={20} aria-hidden="true" />
-      Vocabulario
-    </Link>
-  )
-}
-
 /** Entry page (spec §6): the word with everything the app knows about it. */
 export default function EntryPage() {
   const { id = '' } = useParams()
@@ -74,7 +63,7 @@ export default function EntryPage() {
   if (view === null) {
     return (
       <>
-        <BackLink />
+        <BackLink to="/vocabulary" label="Vocabulario" />
         <EmptyState icon={SearchX} title="Esta palabra ya no está">
           Puede que la hayas eliminado desde otro dispositivo.
         </EmptyState>
@@ -92,7 +81,7 @@ export default function EntryPage() {
 
   return (
     <>
-      <BackLink />
+      <BackLink to="/vocabulary" label="Vocabulario" />
       <EntryHeader entry={entry} />
       <ContextsSection entry={entry} sources={sources} />
       <SensesSection entry={entry} />

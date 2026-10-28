@@ -1,10 +1,11 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { BookOpen } from 'lucide-react'
+import { AudioLines, BookOpen } from 'lucide-react'
 import { Link } from 'react-router'
 import { listActive } from '../../db/repo.ts'
 import { POS_LABEL_ES, posTone } from '../../lib/pos.ts'
 import { Chip } from '../../ui/Chip.tsx'
 import { EmptyState } from '../../ui/EmptyState.tsx'
+import { ICON_BUTTON_CLASS } from '../../ui/classes.ts'
 import { PageHeader } from '../../ui/PageHeader.tsx'
 
 /**
@@ -19,7 +20,14 @@ export default function LibraryPage() {
 
   return (
     <>
-      <PageHeader title="Vocabulario" />
+      <PageHeader
+        title="Vocabulario"
+        actions={
+          <Link to="/phonetics" aria-label="Guía de pronunciación" className={ICON_BUTTON_CLASS}>
+            <AudioLines size={20} strokeWidth={1.75} aria-hidden="true" />
+          </Link>
+        }
+      />
       {entries === undefined ? null : entries.length === 0 ? (
         <EmptyState icon={BookOpen} title="Tu vocabulario aparecerá aquí">
           Añade tu primera palabra con el botón + y la verás en esta lista.
