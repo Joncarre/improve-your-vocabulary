@@ -313,6 +313,8 @@ export const DeviceSettingsSchema = z.object({
   lastSyncOkAt: timestamp.optional(),
   onboardingDone: z.boolean(),
   installGuideDismissed: z.boolean(),
+  /** Whether the review is in backlog mode (many reviews piled up: no new cards until it is down to 50). */
+  backlogMode: z.boolean().optional(),
 })
 export type DeviceSettings = z.infer<typeof DeviceSettingsSchema>
 
