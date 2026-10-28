@@ -1,5 +1,61 @@
 import { newId } from '../src/lib/id.ts'
-import type { Card, Entry, Topic } from '../src/shared/index.ts'
+import type { Card, Entry, EnrichOutput, Topic } from '../src/shared/index.ts'
+
+/** A realistic model answer for "went" in "We went to the pub after work." */
+export function makeEnrichOutput(overrides: Partial<EnrichOutput> = {}): EnrichOutput {
+  return {
+    lemma: 'go',
+    kind: 'word',
+    inflectionNote: '«went» es el pasado simple de «go»',
+    ipa: '/ɡəʊ/',
+    senses: [
+      {
+        pos: 'verb',
+        meaningEs: 'ir',
+        definitionEn: 'to move or travel to a place',
+        register: 'neutral',
+        examples: [
+          { en: 'We went to the cinema on Saturday night.', es: 'Fuimos al cine el sábado por la noche.', target: 'went' },
+          { en: 'I usually go to work by bus.', es: 'Normalmente voy al trabajo en autobús.', target: 'go' },
+        ],
+        matchesContext: true,
+      },
+      {
+        pos: 'noun',
+        meaningEs: 'turno',
+        definitionEn: 'a chance to do something in turn',
+        register: 'neutral',
+        examples: [{ en: "It's your go.", es: 'Es tu turno.', target: 'go' }],
+        matchesContext: false,
+      },
+    ],
+    forms: {
+      verb: {
+        base: 'go',
+        thirdPerson: 'goes',
+        pastSimple: ['went'],
+        pastParticiple: ['gone'],
+        presentParticiple: 'going',
+        irregular: true,
+      },
+      noun: { plural: 'goes', countability: 'countable' },
+      adjective: null,
+    },
+    family: [{ word: 'outgoing', pos: 'adjective', meaningEs: 'sociable', example: 'She is very outgoing.' }],
+    synonyms: ['travel', 'move'],
+    antonyms: ['come', 'stay'],
+    collocations: ['go home', 'go abroad'],
+    learnerNote: '',
+    usNote: '',
+    cefr: 'A1',
+    topicIds: [],
+    newTopic: { nameEs: 'En el pub', emoji: '🍺' },
+    alternativeUnit: '',
+    contextTranslationEs: 'Fuimos al pub después del trabajo.',
+    contextSurface: 'went',
+    ...overrides,
+  }
+}
 
 export function makeTopic(overrides: Partial<Topic> = {}): Topic {
   return { id: newId(), nameEs: 'En el pub', emoji: '🍺', color: '#f3d58a', updatedAt: 0, ...overrides }

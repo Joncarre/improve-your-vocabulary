@@ -78,6 +78,8 @@ export const SenseSchema = z.object({
 })
 export type Sense = z.infer<typeof SenseSchema>
 
+export const CountabilitySchema = z.enum(['countable', 'uncountable', 'both'])
+
 export const VerbFormsSchema = z.object({
   base: z.string(),
   thirdPerson: z.string(),
