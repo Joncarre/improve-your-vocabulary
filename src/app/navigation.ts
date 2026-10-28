@@ -16,5 +16,6 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/progress', label: 'Progreso', icon: ChartNoAxesColumn },
 ]
 
-export const ADD_ITEM: NavItem = { to: '/add', label: 'Añadir', icon: Plus }
+/** "Añadir" is not a screen: it opens the add sheet. */
+export const ADD_ITEM: { label: string; icon: LucideIcon } = { label: 'Añadir', icon: Plus }
 export const SETTINGS_ITEM: NavItem = { to: '/settings', label: 'Ajustes', icon: Settings }

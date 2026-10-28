@@ -3,13 +3,16 @@ import { Link } from 'react-router'
 import { InstallGuide } from '../../app/InstallGuide.tsx'
 import { saveDeviceSettings, useDeviceSettings } from '../../db/settings.ts'
 import { useInstallState } from '../../lib/install.ts'
-import { buttonClass, ICON_BUTTON_CLASS } from '../../ui/classes.ts'
+import { Button } from '../../ui/Button.tsx'
+import { ICON_BUTTON_CLASS } from '../../ui/classes.ts'
 import { EmptyState } from '../../ui/EmptyState.tsx'
 import { PageHeader } from '../../ui/PageHeader.tsx'
+import { useAddSheet } from '../add/addSheetContext.ts'
 
 export default function TodayPage() {
   const install = useInstallState()
   const { settings, ready } = useDeviceSettings()
+  const { openAdd } = useAddSheet()
   const showGuide = install.showIOSGuide && ready && !settings.installGuideDismissed
 
   return (
@@ -28,14 +31,14 @@ export default function TodayPage() {
         ) : null}
         <EmptyState
           icon={Sparkles}
-          title="Todavía no hay palabras"
+          title="Todavía no hay repasos"
           action={
-            <Link to="/add" className={buttonClass('primary')}>
-              Añadir la primera
-            </Link>
+            <Button variant="primary" onClick={() => openAdd()}>
+              Añadir una palabra
+            </Button>
           }
         >
-          Cuando añadas palabras, aquí verás cuántas hay por repasar hoy y cuántas son nuevas.
+          Cuando tengas palabras para repasar, aquí verás cuántas hay hoy y cuántas son nuevas.
         </EmptyState>
       </div>
     </>

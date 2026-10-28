@@ -105,15 +105,43 @@ describe('lookupDictionary', () => {
     expect((await lookupDictionary('decide', { fetchImpl: respond(200, decide) }))?.ipa).toBe('/dɪˈsaɪd/')
   })
 
-  it('resolves to null for an unknown word, a failing service or no connection', async () => {
-    expect(await lookupDictionary('zzzz', { fetchImpl: respond(404, { title: 'No Definitions Found' }) })).toBeNull()
-    expect(await lookupDictionary('x', { fetchImpl: respond(502, {}) })).toBeNull()
-    expect(
-      await lookupDictionary('x', {
-        fetchImpl: async () => {
-          throw new TypeError('Failed to fetch')
-        },
-      }),
-    ).toBeNull()
+  it('resolves to null for an unknown word, without retrying', async () => {
+    const fetchImpl = respond(404, { title: 'No Definitions Found' })
+    expect(await lookupDictionary('zzzz', { fetchImpl, retryDelayMs: 0 })).toBeNull()
+    expect(fetchImpl).toHaveBeenCalledTimes(1)
+  })
+
+  it('retries once after a server error and uses the second answer', async () => {
+    const fetchImpl = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('Bad Gateway', { status: 502 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(decide), { status: 200 }))
+
+    expect((await lookupDictionary('decide', { fetchImpl, retryDelayMs: 0 }))?.ipa).toBe('/dɪˈsaɪd/')
+    expect(fetchImpl).toHaveBeenCalledTimes(2)
+  })
+
+  it('retries once after a network error, then gives up with null', async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () => {
+      throw new TypeError('Failed to fetch')
+    })
+
+    expect(await lookupDictionary('x', { fetchImpl, retryDelayMs: 0 })).toBeNull()
+    expect(fetchImpl).toHaveBeenCalledTimes(2)
+  })
+
+  it('gives up with null when the service keeps failing', async () => {
+    expect(await lookupDictionary('x', { fetchImpl: respond(502, {}), retryDelayMs: 0 })).toBeNull()
+  })
+
+  it('does not retry a cancelled lookup', async () => {
+    const controller = new AbortController()
+    controller.abort()
+    const fetchImpl = vi.fn<typeof fetch>(async () => {
+      throw new DOMException('aborted', 'AbortError')
+    })
+
+    expect(await lookupDictionary('x', { fetchImpl, signal: controller.signal, retryDelayMs: 0 })).toBeNull()
+    expect(fetchImpl).toHaveBeenCalledTimes(1)
   })
 })

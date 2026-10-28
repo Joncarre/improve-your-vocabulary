@@ -9,6 +9,10 @@ export type ChipTone =
   | 'idiom'
   | 'other'
   | 'accent'
+  | 'again'
+  | 'hard'
+  | 'good'
+  | 'easy'
 
 // Pastel text on a 14 % tint of the same colour (class names are spelled out so Tailwind sees them).
 const TONES: Record<ChipTone, string> = {
@@ -20,6 +24,10 @@ const TONES: Record<ChipTone, string> = {
   idiom: 'bg-idiom/14 text-idiom',
   other: 'bg-other/14 text-other',
   accent: 'bg-accent/14 text-accent',
+  again: 'bg-again/14 text-again',
+  hard: 'bg-hard/14 text-hard',
+  good: 'bg-good/14 text-good',
+  easy: 'bg-easy/14 text-easy',
 }
 
 export function Chip({ tone = 'other', children }: { tone?: ChipTone; children: ReactNode }) {

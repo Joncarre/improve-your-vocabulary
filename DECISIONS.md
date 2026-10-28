@@ -26,6 +26,21 @@ Registro breve y fechado de las decisiones tomadas donde el documento inicial no
 - Fase 6 · La tabla `records` se crea sola (`CREATE TABLE IF NOT EXISTS`) en la primera llamada a `/api/sync`; el SQL queda también en el repo.
 - Fase 8 · **Dictado** estricto con ortografía británica (la americana cuenta como error, con pista); la tarjeta de producción acepta variantes UK y US.
 
+**Fase 2 (añadir palabras con IA)**
+- **Medición real de `/api/ai`** (Haiku 5.5, 10 palabras con y sin frase): con `effort: 'low'` y el pensamiento adaptativo por defecto tardaba 12–16 s por palabra; con `thinking: { type: 'disabled' }` baja a **5,3 s de media** (mínimo 2,5 s, típico 3–6 s) con ~3.600 tokens de entrada y ~900 de salida, es decir **~0,0008 $ por palabra**. La primera llamada tras un despliegue (o una vez al día) tarda ~12 s porque Anthropic compila el esquema. El objetivo del documento de menos de 3 s no es alcanzable con ~1.000 tokens de salida; el esqueleto animado cubre la espera.
+- La salida del modelo no usa campos opcionales (los esquemas de structured outputs los evitan): todo es obligatorio, con `""`, `[]` o `null` para «no aplica». Se normaliza en `normalizeEnrich` (máx. 4 acepciones, 2 ejemplos por acepción, 2 temas y solo ids que se enviaron).
+- El código solo de servidor vive en `src/server/` (no figura en §14) y se excluye de `tsconfig.app.json`; las funciones de `api/` solo lo importan.
+- Códigos de error de `/api/ai` en español y estables: `unauthorized`, `bad_request`, `not_configured` (503, sin clave: la app sigue con el diccionario y a mano, sin cola de pendientes), `server_misconfigured`, `rate_limited`, `billing`, `timeout`, `refused`, `invalid_output`, `upstream`. Son reintentables `network`, `timeout`, `rate_limited`, `upstream` e `invalid_output`; esos casos dejan la palabra como `pending_ai`.
+- La respuesta incluye `meta` (modelo, ms y tokens) para poder vigilar el coste.
+- **Añadir** es una hoja y no una ruta: se elimina `/add`. El atajo `N` y los botones la abren desde cualquier pantalla.
+- **Unidad completa:** al elegirla se vuelve a analizar la unidad (una segunda llamada), porque la IPA, las acepciones y las formas del lema suelto no valen para el phrasal verb o la expresión. `seenForm` conserva lo que se escribió.
+- **Duplicados:** si la palabra escrita ya existe y no hay frase, se muestra «Ya la tienes» sin llamar a la IA. Con frase se analiza igualmente para saber si usa una acepción nueva. Si la IA falla pero la palabra existe, se ofrece igualmente añadir la frase.
+- **Entradas pendientes:** al completarlas, la IA sobrescribe lo suyo (acepciones, formas, familia, notas, IPA y lema); se conservan los contextos, los temas que ya tuviera, la fecha de creación y la grabación del diccionario. Si el lema real ya existe, los contextos pasan a esa entrada y la pendiente se borra (también sus tarjetas, de forma lógica). Se procesan de una en una, se detienen en el primer fallo y reintentan a los 60 s, al volver la conexión o al guardar otra.
+- **Lista en lote:** sin vista previa; duplicados añaden la frase como contexto, los errores reintentables dejan la palabra como pendiente y los demás se muestran como fallo sin guardar. No aplica la unidad completa (se guarda el lema).
+- **Fuentes** creadas al añadir tienen tipo `other`: el formulario del documento no pide el tipo.
+- **Listado provisional** en Vocabulario (lema, IPA, significado y marca «Pendiente») para ver lo añadido; búsqueda, vistas y filtros llegan en la Fase 4.
+- Los tests nunca contienen secretos reales: un test llevó por error el `APP_SECRET` real y el clasificador de seguridad bloqueó el commit antes de que se guardara en el historial.
+
 **Herramientas y versiones**
 - **TypeScript 7.0.2 y Oxlint** (la plantilla oficial de Vite, `create-vite` 9.3.3, los trae así) en lugar de ESLint + TypeScript 6.0.3, que era lo previsto en el plan: sin typescript-eslint desaparece el conflicto de versiones con TypeScript 7. `typescript/no-explicit-any` está como error.
 - **ts-fsrs 5.4.x** (estable; la 6.0 sigue en beta con otra API). En la Fase 5 se confirma que es FSRS-6.

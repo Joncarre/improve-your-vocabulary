@@ -8,7 +8,6 @@ const LibraryPage = lazy(() => import('../features/library/LibraryPage.tsx'))
 const GamesPage = lazy(() => import('../features/games/GamesPage.tsx'))
 const ProgressPage = lazy(() => import('../features/progress/ProgressPage.tsx'))
 const SettingsPage = lazy(() => import('../features/settings/SettingsPage.tsx'))
-const AddPage = lazy(() => import('../features/add/AddPage.tsx'))
 
 export function App() {
   return (
@@ -19,7 +18,6 @@ export function App() {
         <Route path="games" element={<GamesPage />} />
         <Route path="progress" element={<ProgressPage />} />
         <Route path="settings" element={<SettingsPage />} />
-        <Route path="add" element={<AddPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

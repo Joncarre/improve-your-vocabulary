@@ -115,19 +115,26 @@ export function parseDictionaryResponse(json: unknown): DictionaryResult | null 
   }
 }
 
-/** Looks a word up; resolves to null when the dictionary does not know it or cannot be reached. */
+/**
+ * Looks a word up; resolves to null when the dictionary does not know it or cannot be reached.
+ * It is a free community service that fails now and then, so a network error or a 5xx gets one retry.
+ */
 export async function lookupDictionary(
   word: string,
-  options: { signal?: AbortSignal; fetchImpl?: typeof fetch } = {},
+  options: { signal?: AbortSignal; fetchImpl?: typeof fetch; retryDelayMs?: number } = {},
 ): Promise<DictionaryResult | null> {
   const fetchImpl = options.fetchImpl ?? fetch
-  try {
-    const response = await fetchImpl(`${DICTIONARY_URL}${encodeURIComponent(word.trim().toLowerCase())}`, {
-      ...(options.signal ? { signal: options.signal } : {}),
-    })
-    if (!response.ok) return null
-    return parseDictionaryResponse(await response.json())
-  } catch {
-    return null
+  const url = `${DICTIONARY_URL}${encodeURIComponent(word.trim().toLowerCase())}`
+
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      const response = await fetchImpl(url, { ...(options.signal ? { signal: options.signal } : {}) })
+      if (response.ok) return parseDictionaryResponse(await response.json())
+      if (response.status < 500) return null
+    } catch {
+      if (options.signal?.aborted) return null
+    }
+    if (attempt === 1) await new Promise((resolve) => setTimeout(resolve, options.retryDelayMs ?? 400))
   }
+  return null
 }

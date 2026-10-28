@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react'
 import { NavLink } from 'react-router'
-import { ADD_ITEM, NAV_ITEMS, type NavItem } from './navigation.ts'
+import { useAddSheet } from '../features/add/addSheetContext.ts'
+import { NAV_ITEMS, type NavItem } from './navigation.ts'
 
 function Tab({ item }: { item: NavItem }) {
   const Icon = item.icon
@@ -20,6 +21,7 @@ function Tab({ item }: { item: NavItem }) {
 
 /** iOS-style tab bar (below 1024 px): Hoy, Vocabulario, [+], Juegos, Progreso. */
 export function BottomNav() {
+  const { openAdd } = useAddSheet()
   const [today, vocabulary, games, progress] = NAV_ITEMS
   return (
     <nav
@@ -29,15 +31,16 @@ export function BottomNav() {
       <div className="mx-auto flex h-[49px] max-w-[560px] items-stretch">
         {today ? <Tab item={today} /> : null}
         {vocabulary ? <Tab item={vocabulary} /> : null}
-        <NavLink
-          to={ADD_ITEM.to}
+        <button
+          type="button"
           aria-label="Añadir palabra"
+          onClick={() => openAdd()}
           className="flex flex-1 items-center justify-center"
         >
           <span className="flex size-11 items-center justify-center rounded-full bg-accent text-bg">
             <Plus size={22} strokeWidth={2.5} aria-hidden="true" />
           </span>
-        </NavLink>
+        </button>
         {games ? <Tab item={games} /> : null}
         {progress ? <Tab item={progress} /> : null}
       </div>

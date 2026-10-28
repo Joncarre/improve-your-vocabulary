@@ -1,6 +1,6 @@
 # PLAN — App de vocabulario en inglés británico (PWA personal)
 
-> **Estado:** Fase 1 desplegada en Vercel; faltan las comprobaciones 📱 en el iPhone · esperando tu confirmación para la Fase 2
+> **Estado:** Fase 2 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1 y 2) · esperando tu confirmación para la Fase 3
 > **Última actualización:** 2026-10-28
 
 **Leyenda:** `[ ]` pendiente · `[x]` hecho · **✅** criterio de aceptación del documento · 🤖 lo verifico yo (tests, capturas, Lighthouse) · 📱 lo compruebas tú en el iPhone real · 👤 acción tuya (cuentas, paneles, claves)
@@ -26,7 +26,7 @@
 |---|---|---|
 | 0 | Plan | hecha |
 | 1 | Cimientos y despliegue | hecha y desplegada; faltan las comprobaciones en el iPhone |
-| 2 | Añadir palabras con IA | pendiente |
+| 2 | Añadir palabras con IA | hecha; faltan las comprobaciones en el iPhone |
 | 3 | Ficha y audio | pendiente |
 | 4 | Vocabulario, temas y fuentes | pendiente |
 | 5 | Repaso (FSRS) | pendiente |
@@ -127,37 +127,37 @@
 ### Fase 2 — Añadir palabras con IA
 
 **2a · Endpoint de IA (sin interfaz)**
-- [ ] (docs) `@anthropic-ai/sdk` 1.x (`messages.parse`, `zodOutputFormat`, `output_config`), structured outputs y Haiku 5.5 (`effort`, `refusal`)
-- [ ] 👤 Crear una clave de API en platform.claude.com con saldo de prepago (la suscripción Claude Pro no incluye la API), poner `ANTHROPIC_API_KEY`, `APP_SECRET` y `ANTHROPIC_MODEL` en `.env.local` y en Vercel, y fijar un límite mensual de gasto en la consola de Anthropic
-- [ ] Esquemas Zod de entrada y salida de `enrich` en `src/shared`: campos de `Entry` y `Sense` sin ids ni estadísticas, más `alternativeUnit`, `contextTranslationEs`, `newTopic` y los extras de B4; adaptados a structured outputs (objetos cerrados, sin restricciones no admitidas, vacíos en lugar de opcionales)
-- [ ] `api/ai.ts`: `x-app-secret` con comparación en tiempo constante (401); límites (palabra ≤ 80, frase ≤ 400, temas ≤ 50); tiempo máximo de 25 s; errores en español; validación con Zod y un reintento; `refusal` y `max_tokens` como error recuperable; modelo desde `ANTHROPIC_MODEL` (por defecto `claude-haiku-5-5`) con `effort: 'low'` y sin `temperature` ni *prefill*
-- [ ] System prompt de `enrich` (§13) y modo `examples_only`
-- [ ] Cliente `src/ai/`: `fetch` con secreto, `AbortController`, errores tipados (sin conexión, 401, 429, tiempo agotado, IA)
-- [ ] Medición real con tu clave: latencia y coste de 10 palabras, anotados en `DECISIONS.md` (R3)
-- [ ] Tests: validación de entrada y límites, comparación del secreto, parseo y validación con el SDK simulado
+- [x] (docs) `@anthropic-ai/sdk` 1.x (`messages.parse`, `zodOutputFormat`, `output_config`), structured outputs y Haiku 5.5 (`effort`, `refusal`)
+- [x] 👤 Crear una clave de API en platform.claude.com con saldo de prepago (la suscripción Claude Pro no incluye la API), poner `ANTHROPIC_API_KEY`, `APP_SECRET` y `ANTHROPIC_MODEL` en `.env.local` y en Vercel, y fijar un límite mensual de gasto en la consola de Anthropic
+- [x] Esquemas Zod de entrada y salida de `enrich` en `src/shared`: campos de `Entry` y `Sense` sin ids ni estadísticas, más `alternativeUnit`, `contextTranslationEs`, `newTopic` y los extras de B4; adaptados a structured outputs (objetos cerrados, sin restricciones no admitidas, vacíos en lugar de opcionales)
+- [x] `api/ai.ts`: `x-app-secret` con comparación en tiempo constante (401); límites (palabra ≤ 80, frase ≤ 400, temas ≤ 50); tiempo máximo de 25 s; errores en español; validación con Zod y un reintento; `refusal` y `max_tokens` como error recuperable; modelo desde `ANTHROPIC_MODEL` (por defecto `claude-haiku-5-5`) con `effort: 'low'` y sin `temperature` ni *prefill*
+- [x] System prompt de `enrich` (§13) y modo `examples_only`
+- [x] Cliente `src/ai/`: `fetch` con secreto, `AbortController`, errores tipados (sin conexión, 401, 429, tiempo agotado, IA)
+- [x] Medición real con tu clave: latencia y coste de 10 palabras, anotados en `DECISIONS.md` (R3)
+- [x] Tests: validación de entrada y límites, comparación del secreto, parseo y validación con el SDK simulado
 
 **2b · Hoja de añadir y guardado**
-- [ ] `Sheet` (móvil, con `visualViewport` para que el teclado no tape campos ni botón) y `Dialog` (escritorio); atajo `N`; `Esc` cierra
-- [ ] Formulario: palabra (foco automático, `autocapitalize="off"`, `autocorrect="off"`, `spellcheck={false}`), frase con «Pegar», fuente con autocompletado («modo maratón» si hay una palabra de hace menos de 3 h) y detalle
-- [ ] Analizar → esqueleto animado → vista previa editable (quitar acepciones, corregir la traducción, cambiar temas) → Guardar
-- [ ] Formas flexionadas: guarda el lema, conserva `seenForm` y muestra la nota «*went* es el pasado de *go*»
-- [ ] Unidad completa (`alternativeUnit`): me dejas elegir qué guardar
-- [ ] Temas: envío los existentes (máx. 50), asigno 1–2 y creo `newTopic` con emoji y color de la paleta pastel
-- [ ] Guardado en una transacción: `Entry`, `Context`, `Source` (si es nueva) y 2 `Card` (reconocimiento nueva; producción bloqueada)
-- [ ] Duplicados por `lemmaKey`: «Ya la tienes», añadir la frase como contexto sin duplicar tarjetas y añadir la acepción nueva si procede
+- [x] `Sheet` (móvil, con `visualViewport` para que el teclado no tape campos ni botón) y `Dialog` (escritorio); atajo `N`; `Esc` cierra
+- [x] Formulario: palabra (foco automático, `autocapitalize="off"`, `autocorrect="off"`, `spellcheck={false}`), frase con «Pegar», fuente con autocompletado («modo maratón» si hay una palabra de hace menos de 3 h) y detalle
+- [x] Analizar → esqueleto animado → vista previa editable (quitar acepciones, corregir la traducción, cambiar temas) → Guardar
+- [x] Formas flexionadas: guarda el lema, conserva `seenForm` y muestra la nota «*went* es el pasado de *go*»
+- [x] Unidad completa (`alternativeUnit`): me dejas elegir qué guardar
+- [x] Temas: envío los existentes (máx. 50), asigno 1–2 y creo `newTopic` con emoji y color de la paleta pastel
+- [x] Guardado en una transacción: `Entry`, `Context`, `Source` (si es nueva) y 2 `Card` (reconocimiento nueva; producción bloqueada)
+- [x] Duplicados por `lemmaKey`: «Ya la tienes», añadir la frase como contexto sin duplicar tarjetas y añadir la acepción nueva si procede
 
 **2c · Robustez y lotes**
-- [ ] `pending_ai`: sin conexión o con error de IA se guarda con lo que haya y se completa sola al volver la conexión (evento `online` y al abrir la app); marca visual
-- [ ] Respaldo con la Free Dictionary API (IPA, definición y audio solo si es `-uk`/`_gb_`); el resto, editable a mano
-- [ ] Sin clave configurada (`/api/ai` responde «IA no configurada»), la app trabaja en modo diccionario gratuito + manual, sin cola de pendientes: la IA queda como pieza opcional (B18)
-- [ ] Añadir varias: pegar una lista (`palabra — frase`), cola de 2 en 2 con progreso visible
-- [ ] Tests: normalización de `lemmaKey`, detección de duplicados, fusión de contextos, creación de tarjetas, parseo de la lista, mapeo de la Free Dictionary a una `Entry` parcial
+- [x] `pending_ai`: sin conexión o con error de IA se guarda con lo que haya y se completa sola al volver la conexión (evento `online` y al abrir la app); marca visual
+- [x] Respaldo con la Free Dictionary API (IPA, definición y audio solo si es `-uk`/`_gb_`); el resto, editable a mano
+- [x] Sin clave configurada (`/api/ai` responde «IA no configurada»), la app trabaja en modo diccionario gratuito + manual, sin cola de pendientes: la IA queda como pieza opcional (B18)
+- [x] Añadir varias: pegar una lista (`palabra — frase`), cola de 2 en 2 con progreso visible
+- [x] Tests: normalización de `lemmaKey`, detección de duplicados, fusión de contextos, creación de tarjetas, parseo de la lista, mapeo de la Free Dictionary a una `Entry` parcial
 
 **Criterios de aceptación**
-- [ ] ✅ 🤖📱 *went* con *We went to the pub after work* da la entrada de *go* con formas, familia, IPA RP correcta y ejemplos
-- [ ] ✅ 🤖📱 *She went off on one when she saw the bill* propone guardar *go off on one*
-- [ ] ✅ 🤖📱 Una palabra añadida sin conexión se completa sola al volver la conexión
-- [ ] ✅ 📱 En el 13 mini, con el teclado abierto, se ven los campos y el botón «Analizar»
+- [x] ✅ 🤖📱 *went* con *We went to the pub after work* da la entrada de *go* con formas, familia, IPA RP correcta y ejemplos (🤖 comprobado con la API real; la IPA sale como /ɡəʊ/)
+- [x] ✅ 🤖📱 *She went off on one when she saw the bill* propone guardar *go off on one* (🤖 comprobado con la API real: se guarda con IPA /ɡəʊ ɒf ɒn wʌn/)
+- [x] ✅ 🤖📱 Una palabra añadida sin conexión se completa sola al volver la conexión (🤖 comprobado con la API real: ~5 s después de volver la conexión; y la hoja abre sin conexión en el build de producción)
+- [ ] ✅ 📱 En el 13 mini, con el teclado abierto, se ven los campos y el botón «Analizar» (🤖 comprobado con un `visualViewport` simulado de 476 px de alto; falta el teclado real del iPhone)
 
 ### Fase 3 — Ficha y audio
 
@@ -321,7 +321,7 @@ Para que no queden botones muertos ni trabajo duplicado:
 |---|---|---|---|
 | R1 | **No tengo un iPhone real** (trabajo en Windows). El teclado virtual, el audio, las *safe areas*, la instalación y el service worker en iOS pueden fallar sin que mis pruebas lo vean. | Playwright con WebKit y perfil iPhone 13 mini para la maquetación. Al cerrar cada fase te dejo una lista corta «pruébalo así en el iPhone». Los ✅ marcados con 📱 los confirmas tú. | 1–3, 5 |
 | R2 | **Audio UK de la Free Dictionary escaso y poco fiable** (apartado 4). Si el iPhone no tiene una buena voz británica, la pronunciación será floja. En iOS, el audio automático al mostrar la palabra necesita un gesto previo. | Vía principal: `speechSynthesis` con `en-GB`. El mp3 solo se usa si es `-uk`/`_gb_`, con tiempo límite y salto inmediato a voz sintética. `fetch` → Blob evita las peticiones `Range` de Safari. El gesto de «Empezar» y de cada valoración desbloquea el audio. Guía para descargar voces mejoradas en Ajustes. | 2–3 |
-| R3 | **IA: latencia, calidad y coste.** El objetivo de menos de 3 s es ambicioso: la latencia depende de los ~1.000–1.500 tokens de salida (esperable 4–8 s) y el primer uso de un esquema nuevo paga compilación. Haiku puede errar IPA RP, formas o familia. | `effort: 'low'`, `max_tokens` ajustado, esquema simple y región `fra1`. Esqueleto animado y vista previa editable. Zod con un reintento y campos vacíos si hay duda. `refusal` y `max_tokens` van a `pending_ai` con el respaldo. Si la calidad no convence, `ANTHROPIC_MODEL=claude-sonnet-5-5` sin tocar código. Mido latencia y coste reales en la 2a. | 2 |
+| R3 | **IA: latencia, calidad y coste.** El objetivo de menos de 3 s es ambicioso: la latencia depende de los ~1.000–1.500 tokens de salida (medido en la Fase 2: 5,3 s de media con el pensamiento desactivado y 12–16 s con el adaptativo) y el primer uso de un esquema nuevo paga compilación. Haiku puede errar IPA RP, formas o familia. | `effort: 'low'`, `max_tokens` ajustado, esquema simple y región `fra1`. Esqueleto animado y vista previa editable. Zod con un reintento y campos vacíos si hay duda. `refusal` y `max_tokens` van a `pending_ai` con el respaldo. Si la calidad no convence, `ANTHROPIC_MODEL=claude-sonnet-5-5` sin tocar código. Mido latencia y coste reales en la 2a. | 2 |
 | R4 | **Seguridad del secreto compartido.** Sin login, quien lo tenga puede gastar tu crédito de Anthropic y leer o escribir tus datos. | Secreto largo y aleatorio, comparación en tiempo constante, límites de entrada, solo HTTPS, nunca en el repo ni en logs, límite mensual de gasto en la consola de Anthropic. Rotarlo = cambiar la variable en Vercel y reintroducirlo en cada dispositivo. | 2, 6 |
 | R5 | **Sincronización.** (a) `bigserial` puede publicar `seq` fuera de orden entre transacciones concurrentes y un cliente saltarse filas. (b) «Gana la última escritura» depende de los relojes. (c) Cuerpo máximo de 4,5 MB. (d) La primera consulta a Neon tras inactividad tarda ~1 s. (e) «Reemplazar todo» puede resucitar datos. | (a) *Pull* con solape pequeño, idempotente por `updatedAt`. (b) Aceptado por diseño (un solo usuario); los `logs` solo añaden, así que el historial no se pierde aunque se sobrescriba el estado de una tarjeta. (c) Lotes de ≤ 500 registros y ≤ ~1 MB. (d) La sincronización va en segundo plano. (e) Borrado lógico (B10). | 6 |
 | R6 | **Funciones de Vercel con código compartido.** `api/` importa `src/shared` (Zod); Vercel no admite alias `paths`; el proyecto es ESM y la resolución de extensiones en TypeScript puede fallar solo en producción. | Spike `/api/health` en la Fase 1, probado en desarrollo y en Vercel. Imports relativos. Si falla: extensiones explícitas o empaquetar `api/` con esbuild. | 1 |
