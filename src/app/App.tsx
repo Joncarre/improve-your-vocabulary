@@ -8,6 +8,8 @@ const LibraryShell = lazy(() => import('../features/library/LibraryShell.tsx'))
 const SourcePage = lazy(() => import('../features/library/SourcePage.tsx'))
 const EntryPage = lazy(() => import('../features/entry/EntryPage.tsx'))
 const PhoneticsPage = lazy(() => import('../features/phonetics/PhoneticsPage.tsx'))
+const ReviewPage = lazy(() => import('../features/review/ReviewPage.tsx'))
+const LeechesPage = lazy(() => import('../features/review/LeechesPage.tsx'))
 const GamesPage = lazy(() => import('../features/games/GamesPage.tsx'))
 const ProgressPage = lazy(() => import('../features/progress/ProgressPage.tsx'))
 const SettingsPage = lazy(() => import('../features/settings/SettingsPage.tsx'))
@@ -24,6 +26,9 @@ export function App() {
         </Route>
         <Route path="source/:id" element={<SourcePage />} />
         <Route path="phonetics" element={<PhoneticsPage />} />
+        <Route path="review" element={<ReviewPage />} />
+        <Route path="review/series/:id" element={<ReviewPage />} />
+        <Route path="leeches" element={<LeechesPage />} />
         <Route path="games" element={<GamesPage />} />
         <Route path="progress" element={<ProgressPage />} />
         <Route path="settings" element={<SettingsPage />} />

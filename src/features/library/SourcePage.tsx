@@ -12,8 +12,8 @@ import { buildRows } from './model.ts'
 import { entriesOfSource } from './topics.ts'
 
 /**
- * A series or film with the words found in it (spec §9). The buttons "Repasar esta serie" and
- * "Jugar con esta serie" arrive with the review (phase 5) and the games (phase 7).
+ * A series or film with the words found in it (spec §9), with "Repasar esta serie" (an extra review
+ * that does not touch the calendar). "Jugar con esta serie" arrives with the games (phase 7).
  */
 export default function SourcePage() {
   const { id = '' } = useParams()
@@ -57,6 +57,12 @@ export default function SourcePage() {
           {rows.length === 1 ? '1 palabra apuntada aquí' : `${rows.length} palabras apuntadas aquí`}
         </p>
       </header>
+
+      {rows.length > 0 ? (
+        <Link to={`/review/series/${source.id}`} className={buttonClass('primary', 'mt-4 w-full')}>
+          Repasar esta serie
+        </Link>
+      ) : null}
 
       <div className="mt-4">
         {rows.length === 0 ? (

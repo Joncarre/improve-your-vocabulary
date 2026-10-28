@@ -21,6 +21,13 @@ import { topicUsage } from './topics.ts'
 /** Rows drawn at first and each time the end of the list comes near: a thousand words stay instant. */
 const PAGE_SIZE = 100
 
+/** A link such as /vocabulary?estado=pending opens the list with that filter (it is not remembered). */
+function withUrlStatus(prefs: LibraryPrefs): LibraryPrefs {
+  const wanted = new URLSearchParams(window.location.search).get('estado')
+  const status = STATUS_FILTERS.find((option) => option.value === wanted)?.value
+  return status ? { ...prefs, status } : prefs
+}
+
 function isTyping(target: EventTarget | null): boolean {
   return target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))
 }
@@ -44,7 +51,7 @@ function ListSkeleton() {
 /** The list of words: search, views, filters by state and order (spec §9). */
 export function LibraryList({ selectedId }: { selectedId?: string | undefined }) {
   const data = useLiveQuery(loadLibrary, [])
-  const [prefs, setPrefs] = useState<LibraryPrefs>(loadPrefs)
+  const [prefs, setPrefs] = useState<LibraryPrefs>(() => withUrlStatus(loadPrefs()))
   const [query, setQuery] = useState('')
   const [topicsOpen, setTopicsOpen] = useState(false)
   const [now] = useState(() => Date.now())

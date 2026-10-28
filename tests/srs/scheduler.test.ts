@@ -130,6 +130,17 @@ describe('retrievability and serialisation', () => {
     expect(later).toBeGreaterThan(0)
   })
 
+  it('repairs a started card with impossible memory numbers instead of failing', () => {
+    const broken: FsrsCard = { ...newFsrsCard(NOW), state: 1, stability: 0, difficulty: 0, reps: 2, last_review: NOW - MINUTE }
+    expect(() => gradeCard(broken, 3, NOW, 0.9)).not.toThrow()
+    expect(() => previewGrades(broken, NOW, 0.9)).not.toThrow()
+    expect(() => retrievability({ ...broken, state: 2 }, NOW, 0.9)).not.toThrow()
+    expect(toTsCard(broken)).toMatchObject({ stability: 0.01, difficulty: 1 })
+    expect(toTsCard({ ...broken, difficulty: 42 }).difficulty).toBe(10)
+    // a new card keeps its zeros: that is what ts-fsrs expects
+    expect(toTsCard(newFsrsCard(NOW))).toMatchObject({ stability: 0, difficulty: 0 })
+  })
+
   it('converts a card to the library and back without losing anything', () => {
     const card = gradeCard(gradeCard(newFsrsCard(NOW), 3, NOW, 0.9).card, 3, NOW + 10 * MINUTE, 0.9).card
     expect(fromTsCard(toTsCard(card))).toEqual(card)

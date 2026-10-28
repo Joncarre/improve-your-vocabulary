@@ -1,6 +1,6 @@
 # PLAN — App de vocabulario en inglés británico (PWA personal)
 
-> **Estado:** Fase 4 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1 a 4) · esperando tu confirmación para la Fase 5
+> **Estado:** Fase 5 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1 a 5) · esperando tu confirmación para la Fase 6
 > **Última actualización:** 2026-10-28
 
 **Leyenda:** `[ ]` pendiente · `[x]` hecho · **✅** criterio de aceptación del documento · 🤖 lo verifico yo (tests, capturas, Lighthouse) · 📱 lo compruebas tú en el iPhone real · 👤 acción tuya (cuentas, paneles, claves)
@@ -29,7 +29,7 @@
 | 2 | Añadir palabras con IA | hecha; faltan las comprobaciones en el iPhone |
 | 3 | Ficha y audio | hecha; faltan las comprobaciones en el iPhone |
 | 4 | Vocabulario, temas y fuentes | hecha; faltan las comprobaciones en el iPhone |
-| 5 | Repaso (FSRS) | pendiente |
+| 5 | Repaso (FSRS) | hecha; faltan las comprobaciones en el iPhone |
 | 6 | Sincronización y copias | pendiente |
 | 7 | Juegos I: Parejas, Huecos, Formas verbales, Familias | pendiente |
 | 8 | Juegos II: Dictado, Conexiones, Historia | pendiente |
@@ -217,33 +217,33 @@
 ### Fase 5 — Repaso
 
 **5a · Núcleo de repetición espaciada (sin interfaz)**
-- [ ] (docs) ts-fsrs 5.4.x: confirmar FSRS-6, parámetros (`request_retention`, `enable_fuzz`, pasos de aprendizaje y reaprendizaje), vista previa de las 4 valoraciones, *retrievability* y deshacer
-- [ ] `src/srs/scheduler.ts`: ajustes → parámetros (retención, fuzz, pasos de 1 y 10 min, reaprendizaje de 10 min), `preview()` con intervalos formateados («10 min», «2 d»), `grade()`, serialización de `FsrsCard` y copia indexable `due`
-- [ ] Día de estudio de 04:00 a 04:00 (inicio, fin y clave), a prueba de cambios de hora
-- [ ] Estados de tarjeta y de entrada (la tarjeta activa más débil; dominada = racha ≥ 5 y estabilidad ≥ 60 d)
-- [ ] **Las palabras no desaparecen** *(petición del 2026-10-28)*: al acertar, el intervalo crece pero nunca pasa de 180 días (`maximum_interval`), también en las dominadas; nada archiva ni borra una palabra salvo tú (test: tras muchos «Fácil» seguidos, el siguiente repaso no pasa de 180 días)
-- [ ] **Ejemplos variados** *(petición del 2026-10-28)*: función pura que elige la frase de cada repaso entre tus frases y los ejemplos de **todas** las acepciones, sin repetir hasta agotarlas; el reverso destaca la acepción de la frase mostrada (test: recorre todas las acepciones y no repite antes de agotar)
-- [ ] Cola del día: aprendizaje vencido, repasos que vencen antes del fin del día (menor *retrievability* primero), nuevas hasta el límite, 1 nueva cada 4 repasos, hermanas (nunca el mismo día), casi sinónimas (B7), bloques de 20 y atasco > 150 (urgentes primero, sin nuevas hasta bajar de 50)
-- [ ] Desbloqueo de la tarjeta de producción (B6) y marca de rebelde a las 6 recaídas (B5)
-- [ ] Comprobador de respuestas: normalización (minúsculas, espacios, apóstrofos tipográficos), variantes UK/US, formas verbales válidas y Damerau-Levenshtein 1 con más de 4 letras → «Difícil»
-- [ ] Generación del hueco de la tarjeta de producción (con `target`, B4; respaldo por formas conocidas)
-- [ ] Tests (Vitest): scheduler, cola (incluidas hermanas e intercalado), comprobador, estados y día de estudio con cambio de hora
+- [x] (docs) ts-fsrs 5.4.x: confirmado FSRS-6 (21 parámetros), parámetros (`request_retention`, `enable_fuzz`, pasos de aprendizaje y reaprendizaje), vista previa de las 4 valoraciones, *retrievability* y deshacer
+- [x] `src/srs/scheduler.ts`: ajustes → parámetros (retención, fuzz, pasos de 1 y 10 min, reaprendizaje de 10 min), `preview()` con intervalos formateados («10 min», «2 d»), `grade()`, serialización de `FsrsCard` y copia indexable `due`
+- [x] Día de estudio de 04:00 a 04:00 (inicio, fin y clave), a prueba de cambios de hora
+- [x] Estados de tarjeta y de entrada (la tarjeta activa más débil; dominada = racha ≥ 5 y estabilidad ≥ 60 d)
+- [x] **Las palabras no desaparecen** *(petición del 2026-10-28)*: al acertar, el intervalo crece pero nunca pasa de 180 días (`maximum_interval`), también en las dominadas; nada archiva ni borra una palabra salvo tú (test: tras muchos «Fácil» seguidos, el siguiente repaso no pasa de 180 días)
+- [x] **Ejemplos variados** *(petición del 2026-10-28)*: función pura que elige la frase de cada repaso entre tus frases y los ejemplos de **todas** las acepciones, sin repetir hasta agotarlas; el reverso destaca la acepción de la frase mostrada (test: recorre todas las acepciones y no repite antes de agotar)
+- [x] Cola del día: aprendizaje vencido, repasos que vencen antes del fin del día (menor *retrievability* primero), nuevas hasta el límite, 1 nueva cada 4 repasos, hermanas (nunca el mismo día), casi sinónimas (B7), bloques de 20 y atasco > 150 (urgentes primero, sin nuevas hasta bajar de 50)
+- [x] Desbloqueo de la tarjeta de producción (B6) y marca de rebelde a las 6 recaídas (B5)
+- [x] Comprobador de respuestas: normalización (minúsculas, espacios, apóstrofos tipográficos), variantes UK/US, formas verbales válidas y Damerau-Levenshtein 1 con más de 4 letras → «Difícil»
+- [x] Generación del hueco de la tarjeta de producción (con `target`, B4; respaldo por formas conocidas)
+- [x] Tests (Vitest): scheduler, cola (incluidas hermanas e intercalado), comprobador, estados y día de estudio con cambio de hora
 
 **5b · Interfaz de repaso**
-- [ ] Hoy: racha de días, tarjeta principal «X por repasar · Y nuevas · ≈ N min» con **Empezar**, accesos a «Rebeldes (N)» y «Pendientes de completar (N)»; dos columnas en escritorio
-- [ ] Tarjeta de reconocimiento: volteo 3D con muelle (~350 ms), audio automático según ajustes, tu frase en el anverso, reverso con la acepción de la frase mostrada destacada, formas, un ejemplo y la familia en una línea; la frase cambia en cada repaso
-- [ ] Tarjeta de producción: significado, tipo y frase con hueco; campo de texto opcional; valoración sugerida con la diferencia resaltada, que puedo cambiar
-- [ ] 4 botones de valoración con el intervalo previsto; gestos (izquierda = Otra vez, derecha = Bien); atajos de teclado (`Espacio`/`Enter`, `1`–`4`, `Z`, `N`, `/`, `Esc`) con pista discreta
-- [ ] Cada valoración se guarda en una sola transacción: tarjeta, `ReviewLog`, `stats`, `due` y `outbox`
-- [ ] Deshacer la última valoración (revierte tarjeta, log, estadísticas, marca de rebelde y desbloqueo)
-- [ ] Bloques de 20 con opción de seguir; resumen de sesión (tiempo, % de aciertos, nuevas aprendidas, palabras a reforzar)
-- [ ] Lista «Rebeldes» con acciones: regenerar ejemplos con IA y archivar (jugar llega en la Fase 7)
-- [ ] «Repasar esta serie» desde la página de fuente (B8)
-- [ ] Maquetación: tarjeta y 4 botones sin scroll en 375×812; con el teclado abierto en producción siguen visibles la frase con hueco y el campo
+- [x] Hoy: racha de días, tarjeta principal «X por repasar · Y nuevas · ≈ N min» con **Empezar**, accesos a «Rebeldes (N)» y «Pendientes de completar (N)»; dos columnas en escritorio
+- [x] Tarjeta de reconocimiento: volteo 3D con muelle (~350 ms), audio automático según ajustes, tu frase en el anverso, reverso con la acepción de la frase mostrada destacada, formas, un ejemplo y la familia en una línea; la frase cambia en cada repaso
+- [x] Tarjeta de producción: significado, tipo y frase con hueco; campo de texto opcional; valoración sugerida con la diferencia resaltada, que puedo cambiar
+- [x] 4 botones de valoración con el intervalo previsto; gestos (izquierda = Otra vez, derecha = Bien); atajos de teclado (`Espacio`/`Intro`, `1`–`4`, `Z`, `N` —abre «Añadir» en cualquier pantalla—, `Esc`) con pista discreta; `/` solo busca en Vocabulario
+- [x] Cada valoración se guarda en una sola transacción: tarjeta, `ReviewLog`, `stats`, `due` y `outbox`
+- [x] Deshacer la última valoración (revierte tarjeta, log, estadísticas, marca de rebelde y desbloqueo)
+- [x] Bloques de 20 con opción de seguir; resumen de sesión (tiempo, % de aciertos, nuevas aprendidas, palabras a reforzar)
+- [x] Lista «Rebeldes» con acciones: regenerar ejemplos con IA y archivar (jugar llega en la Fase 7)
+- [x] «Repasar esta serie» desde la página de fuente (B8)
+- [x] Maquetación: tarjeta y 4 botones sin scroll en 375×812; con el teclado abierto en producción siguen visibles la frase con hueco y el campo
 
 **Criterios de aceptación**
-- [ ] ✅ 🤖 Tests del scheduler, de la cola (incluidas las hermanas), del comprobador de respuestas y de los criterios de estado
-- [ ] ✅ 🤖📱 En el 13 mini, la tarjeta y los 4 botones caben sin scroll
+- [x] ✅ 🤖 Tests del scheduler, de la cola (incluidas las hermanas), del comprobador de respuestas y de los criterios de estado
+- [x] ✅ 🤖📱 En el 13 mini, la tarjeta y los 4 botones caben sin scroll (🤖 comprobado en WebKit a 375×812 y a 320×568, y con un teclado simulado de 336 px; falta el iPhone real)
 
 ### Fase 6 — Sincronización y copias
 

@@ -36,12 +36,22 @@ export function schedulerFor(desiredRetention: number): FSRS {
   return instance
 }
 
-/** The stored card (dates as milliseconds) as the library wants it. */
+/** Smallest memory values ts-fsrs accepts for a card that has started (it throws "Invalid memory state" below them). */
+const MIN_STABILITY = 0.01
+const MIN_DIFFICULTY = 1
+const MAX_DIFFICULTY = 10
+
+/**
+ * The stored card (dates as milliseconds) as the library wants it. A card that has started but
+ * carries impossible numbers (data imported or synced from somewhere else) is repaired instead of
+ * breaking the whole review.
+ */
 export function toTsCard(card: FsrsCard): TsCard {
+  const started = card.state !== State.New
   return {
     due: new Date(card.due),
-    stability: card.stability,
-    difficulty: card.difficulty,
+    stability: started ? Math.max(card.stability, MIN_STABILITY) : card.stability,
+    difficulty: started ? Math.min(MAX_DIFFICULTY, Math.max(card.difficulty, MIN_DIFFICULTY)) : card.difficulty,
     elapsed_days: card.elapsed_days,
     scheduled_days: card.scheduled_days,
     learning_steps: card.learning_steps,
