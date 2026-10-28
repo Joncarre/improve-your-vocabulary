@@ -1,6 +1,6 @@
 # PLAN — App de vocabulario en inglés británico (PWA personal)
 
-> **Estado:** Fase 1 terminada salvo el despliegue (acciones 👤 y comprobaciones 📱 pendientes) · esperando tu confirmación para la Fase 2
+> **Estado:** Fase 1 desplegada en Vercel; faltan las comprobaciones 📱 en el iPhone · esperando tu confirmación para la Fase 2
 > **Última actualización:** 2026-10-28
 
 **Leyenda:** `[ ]` pendiente · `[x]` hecho · **✅** criterio de aceptación del documento · 🤖 lo verifico yo (tests, capturas, Lighthouse) · 📱 lo compruebas tú en el iPhone real · 👤 acción tuya (cuentas, paneles, claves)
@@ -25,7 +25,7 @@
 | Fase | Contenido | Estado |
 |---|---|---|
 | 0 | Plan | hecha |
-| 1 | Cimientos y despliegue | hecha salvo el despliegue en Vercel y las comprobaciones en el iPhone |
+| 1 | Cimientos y despliegue | hecha y desplegada; faltan las comprobaciones en el iPhone |
 | 2 | Añadir palabras con IA | pendiente |
 | 3 | Ficha y audio | pendiente |
 | 4 | Vocabulario, temas y fuentes | pendiente |
@@ -113,9 +113,9 @@
 
 **1e · Despliegue**
 - [x] `vercel.json`: *rewrites* de SPA (sin `/api`) y región `fra1` (sin cabeceras propias: Vercel ya sirve los estáticos con revalidación)
-- [x] Spike (B16): `/api/health` que importa un esquema de `src/shared`; comprobado con `npm run dev` y con un test. Queda comprobarlo en Vercel (R6)
-- [ ] 👤 Importar el repo en Vercel (A2) y confirmar el despliegue automático desde `main`
-- [ ] Comprobar en el despliegue: manifest, iconos, service worker, carga sin conexión y `/api/health` (R6)
+- [x] Spike (B16): `/api/health` que importa un esquema de `src/shared`; comprobado con `npm run dev` y con un test. Comprobado también en Vercel con TypeScript 7 (R6 resuelto)
+- [x] 👤 Importar el repo en Vercel (A2) y confirmar el despliegue automático desde `main` (hecho: https://improve-your-vocabulary.vercel.app/)
+- [x] Comprobar en el despliegue: manifest, iconos, `sw.js`, reescritura de SPA y `/api/health` (R6), comprobados por HTTP. La carga sin conexión en el iPhone queda en 📱
 - [x] Comprobaciones con Playwright (WebKit con perfil iPhone 13 mini a 375×812 con muesca y barra inferior simuladas, 320 px, tablet y 1280 px): sin scroll horizontal en ninguna ruta, sin errores de consola y carga sin conexión con el service worker activo (Chromium)
 
 **Criterios de aceptación**
