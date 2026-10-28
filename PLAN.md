@@ -1,6 +1,6 @@
 # PLAN — App de vocabulario en inglés británico (PWA personal)
 
-> **Estado:** Fase 0 completada · esperando tu visto bueno para empezar la Fase 1
+> **Estado:** Fase 1 terminada salvo el despliegue (acciones 👤 y comprobaciones 📱 pendientes) · esperando tu confirmación para la Fase 2
 > **Última actualización:** 2026-10-28
 
 **Leyenda:** `[ ]` pendiente · `[x]` hecho · **✅** criterio de aceptación del documento · 🤖 lo verifico yo (tests, capturas, Lighthouse) · 📱 lo compruebas tú en el iPhone real · 👤 acción tuya (cuentas, paneles, claves)
@@ -24,8 +24,8 @@
 
 | Fase | Contenido | Estado |
 |---|---|---|
-| 0 | Plan | hecha, pendiente de tu visto bueno |
-| 1 | Cimientos y despliegue | pendiente |
+| 0 | Plan | hecha |
+| 1 | Cimientos y despliegue | hecha salvo el despliegue en Vercel y las comprobaciones en el iPhone |
 | 2 | Añadir palabras con IA | pendiente |
 | 3 | Ficha y audio | pendiente |
 | 4 | Vocabulario, temas y fuentes | pendiente |
@@ -50,8 +50,8 @@
 | Tema | Hallazgo | Efecto en el plan |
 |---|---|---|
 | Entorno | Node 22.17.1, npm 10.9.2, git con `autocrlf=true`. `origin` apunta a `github.com/Joncarre/improve-your-vocabulary` (sin commits todavía). No hay `gh` ni `vercel` instalados. | Node cumple lo que pide Vite 8 (≥ 20.19 / 22.12). Vercel lo enlazas tú una vez (A2). `.gitattributes` para forzar LF. |
-| Versiones en npm (`latest`) | Vite 8.3.5 · React 19.3.1 · React Router 8.5.1 · Tailwind 4.3.3 · Dexie 4.4.7 + dexie-react-hooks 4.4.0 · Zod 4.6.7 · Motion 14.7.1 · lucide-react 1.62.0 · vite-plugin-pwa 2.0.0 (admite Vite 8) · Vitest 5.0.5 · ESLint 10.13 · @anthropic-ai/sdk 1.3.0 · @neondatabase/serverless 1.2.0 · @fontsource/fraunces y newsreader 5.3.0 | Se instalan las últimas estables compatibles entre sí y se anotan en `DECISIONS.md`. |
-| TypeScript | `latest` es 7.0.2, pero typescript-eslint 8.72 exige `<6.1`. | TypeScript 6.0.3 hasta que typescript-eslint soporte la 7 (B13). |
+| Versiones en npm (`latest`) | Vite 8.3.5 · React 19.3.1 · React Router 8.5.1 (instalada la 7.18: la 8 exige Node ≥ 22.22 y aquí hay 22.17.1) · Tailwind 4.3.3 · Dexie 4.4.7 + dexie-react-hooks 4.4.0 · Zod 4.6.7 · Motion 14.7.1 · lucide-react 1.62.0 · vite-plugin-pwa 2.0.0 (admite Vite 8) · Vitest 5.0.5 · ESLint 10.13 · @anthropic-ai/sdk 1.3.0 · @neondatabase/serverless 1.2.0 · @fontsource/fraunces y newsreader 5.3.0 | Se instalan las últimas estables compatibles entre sí y se anotan en `DECISIONS.md`. |
+| TypeScript y linter | `latest` es 7.0.2, pero typescript-eslint 8.72 exige `<6.1`. La plantilla oficial de Vite (create-vite 9.3.3) ya trae TypeScript 7.0.2 con Oxlint. | Se sigue la plantilla: TypeScript 7.0.2 y Oxlint en lugar de ESLint (B13 revisada). |
 | ts-fsrs | `latest` es 5.4.2; la 6.0.0 está solo en `beta` (el README de GitHub ya describe otra API asíncrona y FSRS-7). | Uso la 5.4.x estable; en la Fase 5 confirmo que es FSRS-6, como pide el documento (B13). |
 | Vercel Functions | Hobby: 300 s máximo con Fluid compute; cuerpo máximo de 4,5 MB; una sola región (por defecto `iad1`, EE. UU.); handlers `export default { fetch(request) }` o `GET`/`POST`; **no** admiten los alias `paths` de tsconfig. | Los 25 s son un límite nuestro (`AbortSignal`). Lotes de sincronización limitados por tamaño. Región `fra1`. Imports relativos entre `api/` y `src/shared`. |
 | Neon (Marketplace) | Inyecta `DATABASE_URL` (pooled) y `DATABASE_URL_UNPOOLED`; la región se elige al instalar. Driver 1.x: plantilla etiquetada, `sql.query(texto, params)` y `sql.transaction([...])`. | Uso `DATABASE_URL` con el driver HTTP; inserción por lotes con una sola sentencia. |
@@ -71,63 +71,64 @@
 - [x] Comprobar en documentación vigente lo que más condiciona el plan (apartado 4)
 - [x] Escribir este `PLAN.md` con fases, tareas, riesgos y dudas
 - [x] Primer commit del repo con el plan
-- [ ] ✅ Tu visto bueno, con respuesta a las dudas del apartado 8
+- [x] ✅ Tu visto bueno («continua con la fase 1»). Cambio posterior: la IA se mantiene (B18)
 
 ### Fase 1 — Cimientos y despliegue
 
 **1a · Proyecto y herramientas**
-- [ ] (docs) Plantilla vigente de `create-vite` (React + TS), Tailwind v4 con `@tailwindcss/vite`, vite-plugin-pwa 2.x, Vitest 5, ESLint 10 (configuración plana)
-- [ ] Proyecto en la raíz con npm y la estructura de carpetas de §14
-- [ ] TypeScript estricto (`strict`, `noUncheckedIndexedAccess`, `forceConsistentCasingInFileNames`) con una versión compatible con typescript-eslint (B13)
-- [ ] ESLint con `@typescript-eslint/no-explicit-any` como error; scripts `dev`, `build`, `lint`, `typecheck`, `test`
-- [ ] Vitest + `fake-indexeddb` + test de humo en verde
-- [ ] `.gitignore` y `.env.example` (de §17), `.gitattributes` (`* text=auto eol=lf`), `README.md` mínimo
-- [ ] `DECISIONS.md` con las decisiones aprobadas del apartado 8 (fechadas) y `docs/SPEC.md` con el documento original (B1)
+- [x] (docs) Plantilla vigente de `create-vite` (React + TS), Tailwind v4 con `@tailwindcss/vite`, vite-plugin-pwa 2.x, Vitest 5, Oxlint
+- [x] Proyecto en la raíz con npm y la estructura de carpetas de §14
+- [x] TypeScript 7 estricto (`strict`, `noUncheckedIndexedAccess`, `forceConsistentCasingInFileNames`) con proyectos separados para la app, las herramientas, `api/` (módulos de Node ESM) y los tests
+- [x] Oxlint con `typescript/no-explicit-any` como error; scripts `dev`, `build`, `lint`, `typecheck`, `test`
+- [x] Vitest + `fake-indexeddb` + test de humo en verde
+- [x] `.gitignore` y `.env.example` (de §17), `.gitattributes` (`* text=auto eol=lf`), `README.md` mínimo
+- [x] `DECISIONS.md` con las decisiones aprobadas del apartado 8 (fechadas) y `docs/SPEC.md` con el documento original (B1)
 
 **1b · Diseño y layout**
-- [ ] Tokens CSS con `@theme` de Tailwind v4: colores de §12 (con B14), pasteles por rol (valoración, chips, temas), escala tipográfica compacta, radios, espaciados y *safe areas*
-- [ ] Test de contraste WCAG de los pares de tokens (evita regresiones)
-- [ ] Estilos base de iOS: `-webkit-tap-highlight-color`, `overscroll-behavior: none`, `100dvh`, inputs de 16 px, `hover` solo bajo `(hover: hover)`, `prefers-reduced-motion`, zonas táctiles ≥ 44 pt
-- [ ] Fuentes autoalojadas: serif editorial (Fraunces o Newsreader; elijo tras verlas en una tarjeta de prueba) y banner de glifos IPA (`ˈ ˌ ː ə ɜ ʊ ɒ ʌ æ θ ð ʃ ʒ ŋ`); Noto Sans solo para la IPA si el sistema falla (R13)
-- [ ] Componentes base: Button, Card, Chip, Skeleton, cabecera con título iOS compacto, Switch/Slider/Select para Ajustes
-- [ ] React Router (modo SPA) con rutas perezosas: Hoy, Vocabulario, Juegos, Progreso, Ajustes
-- [ ] Layout responsive: barra inferior < 1024 px (49 pt + zona segura, desenfoque, botón + central) y barra lateral ≥ 1024 px (Hoy, Vocabulario, Añadir, Juegos, Progreso, Ajustes); tramo 768–1023 con más aire; anchos máximos (tarjeta 480, juegos 640, texto 720)
-- [ ] Pantallas esqueleto con estados vacíos amables; Hoy con engranaje hacia Ajustes; el botón + navega a un marcador (la hoja real es de la Fase 2)
+- [x] Tokens CSS con `@theme` de Tailwind v4: colores de §12 (con B14), pasteles por rol (valoración, chips, temas), escala tipográfica compacta, radios, espaciados y *safe areas*
+- [x] Test de contraste WCAG de los pares de tokens (evita regresiones)
+- [x] Estilos base de iOS: `-webkit-tap-highlight-color`, `overscroll-behavior: none`, `100dvh`, inputs de 16 px, `hover` solo bajo `(hover: hover)`, `prefers-reduced-motion`, zonas táctiles ≥ 44 pt
+- [x] Fuentes autoalojadas: Fraunces variable (solo subconjunto latino) y bloque «Diagnóstico tipográfico» en Ajustes con los glifos IPA (`ˈ ˌ ː ə ɜ ʊ ɒ ʌ æ θ ð ʃ ʒ ŋ`); Noto Sans solo para la IPA si el sistema falla (R13)
+- [x] Componentes base: Button, Card, Chip, Skeleton, cabecera con título iOS compacto, Switch/Slider/Select para Ajustes
+- [x] React Router (modo SPA) con rutas perezosas: Hoy, Vocabulario, Juegos, Progreso, Ajustes
+- [x] Layout responsive: barra inferior < 1024 px (49 pt + zona segura, desenfoque, botón + central) y barra lateral ≥ 1024 px (Hoy, Vocabulario, Añadir, Juegos, Progreso, Ajustes); tramo 768–1023 con más aire; anchos máximos (tarjeta 480, juegos 640, texto 720)
+- [x] Pantallas esqueleto con estados vacíos amables; Hoy con engranaje hacia Ajustes; el botón + navega a un marcador (la hoja real es de la Fase 2)
 
 **1c · Datos locales preparados para sincronizar**
-- [ ] (docs) Dexie 4: versionado de esquema, transacciones, `useLiveQuery`
-- [ ] Esquemas Zod en `src/shared` como fuente única de los tipos de §4 (más `stories`, B2); ids UUID, `updatedAt` y `deletedAt?` en las tablas sincronizables
-- [ ] Esquema Dexie v1 completo (`entries`, `cards`, `logs`, `sources`, `topics`, `games`, `stories`, `sharedSettings`, `deviceSettings`, `outbox`) con los índices de §4, ajustando `[suspended+due]` (B15), y una migración v2 de ejemplo en un test
-- [ ] Repositorios en `src/db`: toda escritura actualiza `updatedAt`, hace borrado lógico y encola en `outbox` en la misma transacción; las lecturas excluyen los borrados; lo que llega de la sincronización no se encola
-- [ ] Ajustes con los valores por defecto de §4 (compartidos y del dispositivo) y su hook
-- [ ] `navigator.storage.persist()` al arrancar y `estimate()` visible en Ajustes
-- [ ] Tests: UUID, `updatedAt`, borrado lógico, `outbox` (encola / no encola), valores por defecto, apertura y migración
+- [x] (docs) Dexie 4: versionado de esquema, transacciones, `useLiveQuery`
+- [x] Esquemas Zod en `src/shared` como fuente única de los tipos de §4 (más `stories`, B2); ids UUID, `updatedAt` y `deletedAt?` en las tablas sincronizables
+- [x] Esquema Dexie v1 completo (`entries`, `cards`, `logs`, `sources`, `topics`, `games`, `stories`, `sharedSettings`, `deviceSettings`, `outbox`) con los índices de §4, ajustando `[suspended+due]` (B15), y una migración v2 de ejemplo en un test
+- [x] Repositorios en `src/db`: toda escritura actualiza `updatedAt`, hace borrado lógico y encola en `outbox` en la misma transacción; las lecturas excluyen los borrados; lo que llega de la sincronización no se encola
+- [x] Ajustes con los valores por defecto de §4 (compartidos y del dispositivo) y su hook
+- [x] `navigator.storage.persist()` al arrancar y `estimate()` visible en Ajustes
+- [x] Tests: UUID, `updatedAt`, borrado lógico, `outbox` (encola / no encola), valores por defecto, apertura y migración
 
 **1d · PWA**
-- [ ] vite-plugin-pwa: manifest (§11), precarga del esqueleto, `registerType: 'prompt'` con aviso «Nueva versión · Actualizar», `/api/*` fuera del *fallback* de navegación y de cualquier caché
-- [ ] Metaetiquetas de iOS: `apple-touch-icon` de 180 px opaco, `apple-mobile-web-app-title`, `status-bar-style: black-translucent`, `viewport-fit=cover`, `theme-color`
-- [ ] Icono: monograma en SVG y `scripts/generate-icons` (con `sharp`) → 192, 512, *maskable* y 180
-- [ ] Detección de modo instalado y guía de instalación en Safari (Compartir → Añadir a pantalla de inicio → «Abrir como app web»)
-- [ ] Onboarding corto: usa siempre el icono (en iOS el almacenamiento de la app instalada es independiente del de Safari) y dónde se introduce el secreto
-- [ ] Ajustes básicos: todos los de §4 editables (voz y velocidad solo guardan el valor; la lista de voces es de la Fase 3), campo del secreto, estado del almacenamiento
+- [x] vite-plugin-pwa: manifest (§11), precarga del esqueleto, `registerType: 'prompt'` con aviso «Nueva versión · Actualizar», `/api/*` fuera del *fallback* de navegación y de cualquier caché
+- [x] Metaetiquetas de iOS: `apple-touch-icon` de 180 px opaco, `apple-mobile-web-app-title`, `status-bar-style: black-translucent`, `viewport-fit=cover`, `theme-color`
+- [x] Icono: monograma en SVG y `scripts/generate-icons` (con `sharp`) → 192, 512, *maskable* y 180
+- [x] Detección de modo instalado y guía de instalación en Safari (Compartir → Añadir a pantalla de inicio → «Abrir como app web»)
+- [x] Onboarding corto: usa siempre el icono (en iOS el almacenamiento de la app instalada es independiente del de Safari) y dónde se introduce el secreto
+- [x] Ajustes básicos: todos los de §4 editables (voz y velocidad solo guardan el valor; la lista de voces es de la Fase 3), campo del secreto, estado del almacenamiento
 
 **1e · Despliegue**
-- [ ] `vercel.json`: *rewrites* de SPA (sin `/api` ni estáticos), región `fra1`, cabeceras de caché del service worker
-- [ ] Spike (B16): `/api/health` que importa un esquema de `src/shared` y funciona con `npm run dev` y en Vercel
+- [x] `vercel.json`: *rewrites* de SPA (sin `/api`) y región `fra1` (sin cabeceras propias: Vercel ya sirve los estáticos con revalidación)
+- [x] Spike (B16): `/api/health` que importa un esquema de `src/shared`; comprobado con `npm run dev` y con un test. Queda comprobarlo en Vercel (R6)
 - [ ] 👤 Importar el repo en Vercel (A2) y confirmar el despliegue automático desde `main`
-- [ ] Comprobar en el despliegue: manifest, iconos, service worker, carga sin conexión y `/api/health`
-- [ ] Script de comprobación a 320 px (sin scroll horizontal en cada ruta) y capturas a 375×812 y 1280 px
+- [ ] Comprobar en el despliegue: manifest, iconos, service worker, carga sin conexión y `/api/health` (R6)
+- [x] Comprobaciones con Playwright (WebKit con perfil iPhone 13 mini a 375×812 con muesca y barra inferior simuladas, 320 px, tablet y 1280 px): sin scroll horizontal en ninguna ruta, sin errores de consola y carga sin conexión con el service worker activo (Chromium)
 
 **Criterios de aceptación**
-- [ ] ✅ 📱 Se instala en el iPhone 13 mini, abre a pantalla completa sin interfaz de Safari y respeta la muesca y la zona inferior
-- [ ] ✅ 🤖 No hay scroll horizontal a 320 px; en el PC se ve con barra lateral
-- [ ] ✅ 🤖📱 El esqueleto carga sin conexión
+- [ ] ✅ 📱 Se instala en el iPhone 13 mini, abre a pantalla completa sin interfaz de Safari y respeta la muesca y la zona inferior (🤖 comprobado el layout con 47 px de muesca y 34 px de barra inferior simulados)
+- [x] ✅ 🤖 No hay scroll horizontal a 320 px; en el PC se ve con barra lateral
+- [ ] ✅ 🤖📱 El esqueleto carga sin conexión (🤖 comprobado en Chromium con el service worker activo; falta 📱 en el iPhone)
+- [ ] 📱 Ajustes → Diagnóstico tipográfico: la serif de «decision» se ve con peso normal y la IPA aparece completa (en el WebKit de Playwright para Windows la serif sale más gruesa; en Chromium es correcta)
 
 ### Fase 2 — Añadir palabras con IA
 
 **2a · Endpoint de IA (sin interfaz)**
 - [ ] (docs) `@anthropic-ai/sdk` 1.x (`messages.parse`, `zodOutputFormat`, `output_config`), structured outputs y Haiku 5.5 (`effort`, `refusal`)
-- [ ] 👤 Poner `ANTHROPIC_API_KEY`, `APP_SECRET` y `ANTHROPIC_MODEL` en `.env.local` y en Vercel; fijar un límite mensual de gasto en la consola de Anthropic
+- [ ] 👤 Crear una clave de API en platform.claude.com con saldo de prepago (la suscripción Claude Pro no incluye la API), poner `ANTHROPIC_API_KEY`, `APP_SECRET` y `ANTHROPIC_MODEL` en `.env.local` y en Vercel, y fijar un límite mensual de gasto en la consola de Anthropic
 - [ ] Esquemas Zod de entrada y salida de `enrich` en `src/shared`: campos de `Entry` y `Sense` sin ids ni estadísticas, más `alternativeUnit`, `contextTranslationEs`, `newTopic` y los extras de B4; adaptados a structured outputs (objetos cerrados, sin restricciones no admitidas, vacíos en lugar de opcionales)
 - [ ] `api/ai.ts`: `x-app-secret` con comparación en tiempo constante (401); límites (palabra ≤ 80, frase ≤ 400, temas ≤ 50); tiempo máximo de 25 s; errores en español; validación con Zod y un reintento; `refusal` y `max_tokens` como error recuperable; modelo desde `ANTHROPIC_MODEL` (por defecto `claude-haiku-5-5`) con `effort: 'low'` y sin `temperature` ni *prefill*
 - [ ] System prompt de `enrich` (§13) y modo `examples_only`
@@ -148,6 +149,7 @@
 **2c · Robustez y lotes**
 - [ ] `pending_ai`: sin conexión o con error de IA se guarda con lo que haya y se completa sola al volver la conexión (evento `online` y al abrir la app); marca visual
 - [ ] Respaldo con la Free Dictionary API (IPA, definición y audio solo si es `-uk`/`_gb_`); el resto, editable a mano
+- [ ] Sin clave configurada (`/api/ai` responde «IA no configurada»), la app trabaja en modo diccionario gratuito + manual, sin cola de pendientes: la IA queda como pieza opcional (B18)
 - [ ] Añadir varias: pegar una lista (`palabra — frase`), cola de 2 en 2 con progreso visible
 - [ ] Tests: normalización de `lemmaKey`, detección de duplicados, fusión de contextos, creación de tarjetas, parseo de la lista, mapeo de la Free Dictionary a una `Entry` parcial
 
@@ -330,7 +332,7 @@ Para que no queden botones muertos ni trabajo duplicado:
 | R11 | **Conexiones:** con pocas palabras puede no haber 4 grupos sin ambigüedad. | El juego aparece bloqueado hasta que sea posible; generador conservador; tests con datos sintéticos y muchas semillas. | 8 |
 | R12 | **Historia:** los modelos suelen contar mal los índices `start`/`end` de `targets`. | Se recalculan buscando `surfaceForm`; los que no aparecen se descartan; los huecos los genera el cliente. | 8 |
 | R13 | **IPA y tipografías:** los subconjuntos `latin` de @fontsource probablemente no cubran todos los símbolos IPA. | Banner de glifos en la Fase 1; si falla, cargar los subconjuntos necesarios de Noto Sans solo para la IPA. | 1, 3 |
-| R14 | **Versiones muy nuevas** (Vite 8, React Router 8, ESLint 10, Vitest 5, vite-plugin-pwa 2…) con dependencias entre pares ajustadas (ya: TypeScript 7 frente a typescript-eslint). | Instalar versiones mutuamente compatibles, leer los changelogs y anotarlo en `DECISIONS.md`; si algo no encaja, bajar solo esa pieza. | 1 |
+| R14 | **Versiones muy nuevas** (Vite 8, React Router 8, Vitest 5, vite-plugin-pwa 2…) con dependencias entre pares y versiones de Node ajustadas (ya: React Router 8 exige Node ≥ 22.22 y aquí hay 22.17.1). | Instalar versiones mutuamente compatibles, leer los changelogs y anotarlo en `DECISIONS.md`; si algo no encaja, bajar solo esa pieza. | 1 |
 | R15 | **Windows → Linux** (Vercel construye en Linux): mayúsculas en imports, saltos de línea CRLF, scripts de shell. | `forceConsistentCasingInFileNames`, `.gitattributes` y scripts npm en Node (no en bash). | 1 |
 
 ## 8. Dudas y decisiones
@@ -341,6 +343,8 @@ Para que no queden botones muertos ni trabajo duplicado:
 |---|---|---|
 | A1 | **Nombre de la app.** El documento no lo fija y lo necesito para el manifest, el título bajo el icono del iPhone y el monograma. | `name`: «Improve Your Vocabulary» · `short_name`: «Vocab» (cabe bajo el icono) · monograma «V» en serif sobre fondo oscuro, con el acento champán. |
 | A2 | **Despliegue.** `origin` ya apunta a `github.com/Joncarre/improve-your-vocabulary` y no hay `gh` ni `vercel` instalados. | 👤 Tú: importar el repo en Vercel una sola vez (luego cada push a `main` despliega solo), poner las variables de entorno y, en la Fase 6, añadir Neon. 🤖 Yo: `git push origin main` al cerrar cada fase. ¿Me das permiso permanente para ese push, prefieres hacerlo tú o que te lo pida cada vez? |
+
+*Estado: A1 sin respuesta, se aplica la propuesta («Improve Your Vocabulary», «Vocab», monograma «V»). A2 sigue abierta: hace falta tu respuesta para el push a GitHub y la importación en Vercel.*
 
 ### B. Decisiones que aplicaré salvo que me digas lo contrario
 
@@ -360,12 +364,13 @@ Se registrarán, con fecha, en `DECISIONS.md` al empezar la Fase 1.
 | B10 | «**Reemplazar todo**» al importar con la sincronización activa: lo que no esté en el archivo se marca como borrado (borrado lógico con `updatedAt` nuevo) y se sube, con aviso explícito. | Si no, el servidor lo devolvería en la siguiente sincronización. |
 | B11 | La tabla `records` se crea sola (`CREATE TABLE IF NOT EXISTS`) en la primera llamada a `/api/sync`; el SQL queda también en el repo por si prefieres ejecutarlo a mano. | Un paso menos para ti. |
 | B12 | **Dictado** estricto con ortografía británica (la americana cuenta como error, con la pista «en inglés británico: colour»); la tarjeta de producción acepta variantes UK y US. | El documento pide «comprueba ortografía británica» en Dictado y «variantes válidas» en producción. |
-| B13 | **TypeScript 6.0.3** (no la 7.0) y **ts-fsrs 5.4.2** (no la 6.0 beta). Reviso en cada fase si ya hay soporte para subir. | Apartado 4. |
+| B13 | **TypeScript 7.0.2 con Oxlint** (como la plantilla oficial de Vite; sustituye al plan inicial de ESLint + TypeScript 6), **ts-fsrs 5.4.2** (no la 6.0 beta) y **React Router 7.18** (la 8 exige Node ≥ 22.22). | Apartado 4. Revisada en la Fase 1. |
 | B14 | `--text-3` pasa de `#71717A` a **`#86868F`**; el resto de tokens, igual. | Cumplir AA como texto pequeño (de 4,09 a 5,48:1 sobre `--bg`; 4,70:1 sobre `--surface-2`). |
 | B15 | **Índice de tarjetas:** se indexa solo `due` y `suspended` se filtra en código. | IndexedDB no admite booleanos como clave; `[suspended+due]` dejaría las tarjetas fuera del índice sin avisar. |
 | B16 | **Adelanto mínimo en la Fase 1:** endpoint `/api/health` y el middleware de Vite que monta `api/*.ts` en desarrollo (lo reutilizan `/api/ai` y `/api/sync`). | Para descubrir pronto problemas de la cadena TS/ESM entre `api/` y `src/shared` (R6). |
 | B17 | **Verificación:** capturas y comprobaciones con Playwright (Chromium y WebKit con perfil iPhone 13 mini, 320 px y 1280 px) y Lighthouse con `npx`, fuera del `package.json` (descarga unos 300 MB fuera del repo). Lo que solo se ve en un iPhone real lo compruebas tú (📱). | No añaden dependencias a la app. |
+| B18 | **La IA se mantiene** (el usuario la descartó y después la aprobó si el coste es bajo). Necesita una clave de API de pago por uso, distinta de Claude Pro; coste estimado de 0,001–0,002 $ por ficha. Queda aislada en `/api/ai`: sin clave, la app funciona con el diccionario gratuito y a mano. | Decisión del usuario el 2026-10-28. |
 
 ---
 
-*Historial del plan: 2026-10-28 · versión 1.*
+*Historial del plan: 2026-10-28 · versión 1 · versión 2 tras la Fase 1 (Oxlint y TypeScript 7, React Router 7, IA confirmada).*

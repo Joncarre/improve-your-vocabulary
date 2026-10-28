@@ -1,0 +1,70 @@
+/*
+ * Design tokens: single source of truth for colours, type scale and radii.
+ * Keep colours as plain "#rrggbb" literals; tests/design/contrast.test.ts parses this file.
+ */
+@theme static {
+  /* Surfaces and text */
+  --color-bg: #0a0a0c;
+  --color-surface: #141418;
+  --color-surface-2: #1c1c22;
+  --color-border: rgb(255 255 255 / 0.07);
+  --color-text: #f4f4f5;
+  --color-text-2: #a1a1aa;
+  --color-text-3: #86868f;
+  --color-accent: #e8d3ae;
+
+  /* Rating buttons: again / hard / good / easy */
+  --color-again: #f2a7a7;
+  --color-hard: #f3d58a;
+  --color-good: #9fdcbf;
+  --color-easy: #a9c8f2;
+
+  /* Word-type chips */
+  --color-noun: #a9c8f2;
+  --color-verb: #9fdcbf;
+  --color-adjective: #cdb4f0;
+  --color-adverb: #f5c29e;
+  --color-phrasal: #9edfd6;
+  --color-idiom: #f2b5d4;
+  --color-other: #b8b8c2;
+
+  /* Fonts: system UI for the interface, editorial serif for words, UI font + Noto Sans fallback for IPA */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Fraunces Variable', 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-ipa: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Noto Sans', 'DejaVu Sans', sans-serif;
+
+  /* Compact type scale, mobile first (reference: iPhone 13 mini, 375 x 812) */
+  --text-body: 15px;
+  --text-body--line-height: 1.4;
+  --text-secondary: 13px;
+  --text-secondary--line-height: 1.35;
+  --text-caption: 12px;
+  --text-caption--line-height: 1.3;
+  --text-section: 17px;
+  --text-section--line-height: 1.3;
+  --text-title: 25px;
+  --text-title--line-height: 1.15;
+  --text-word-card: 31px;
+  --text-word-card--line-height: 1.1;
+  --text-word-entry: 28px;
+  --text-word-entry--line-height: 1.1;
+  --text-ipa: 14px;
+  --text-ipa--line-height: 1.3;
+  --text-chip: 11.5px;
+  --text-chip--line-height: 1;
+  --text-nav: 10px;
+  --text-nav--line-height: 1.1;
+
+  /* Radii */
+  --radius-chip: 6px;
+  --radius-control: 10px;
+  --radius-card: 14px;
+  --radius-sheet: 20px;
+}
+
+/* Desktop: base text grows to 16 px */
+@media (min-width: 1024px) {
+  :root {
+    --text-body: 16px;
+  }
+}

@@ -1,0 +1,6 @@
+# Vercel builds on Linux and the dev machine is Windows: keep LF in the repo.
+* text=auto eol=lf
+
+*.png binary
+*.woff2 binary
+*.mp3 binary
