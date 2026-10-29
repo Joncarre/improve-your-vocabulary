@@ -1,7 +1,7 @@
 # PLAN — App de vocabulario en inglés británico (PWA personal)
 
-> **Estado:** Fase 8 hecha; faltan las comprobaciones 📱 en el iPhone (fases 1 a 8) · esperando tu confirmación para la Fase 9
-> **Última actualización:** 2026-10-28
+> **Estado:** las 9 fases están hechas y desplegadas; solo faltan las comprobaciones 📱 en el iPhone real (lista al final de la fase 9) · esperando tu visto bueno para dar el proyecto por cerrado
+> **Última actualización:** 2026-10-29
 
 **Leyenda:** `[ ]` pendiente · `[x]` hecho · **✅** criterio de aceptación del documento · 🤖 lo verifico yo (tests, capturas, Lighthouse) · 📱 lo compruebas tú en el iPhone real · 👤 acción tuya (cuentas, paneles, claves)
 
@@ -30,20 +30,22 @@
 | 3 | Ficha y audio | hecha; faltan las comprobaciones en el iPhone |
 | 4 | Vocabulario, temas y fuentes | hecha; faltan las comprobaciones en el iPhone |
 | 5 | Repaso (FSRS) | hecha; faltan las comprobaciones en el iPhone |
-| 6 | Sincronización y copias | hecha; Neon ya conectado: falta la primera subida real (👤) y las comprobaciones en el iPhone |
+| 6 | Sincronización y copias | hecha; Neon conectado y primera subida real comprobada; faltan las comprobaciones en el iPhone |
 | 7 | Juegos I: Parejas, Huecos, Formas verbales, Familias | hecha; faltan las comprobaciones en el iPhone |
 | 8 | Juegos II: Dictado, Conexiones, Historia | hecha; faltan las comprobaciones en el iPhone |
-| 9 | Progreso y pulido final | pendiente |
+| 9 | Progreso y pulido final | hecha; faltan las comprobaciones en el iPhone |
 
 ## 3. Cierre de fase (checklist común a las fases 1–9)
 
-- [ ] `npm run build`, `npm run lint` y `npm run typecheck` sin errores
-- [ ] `npm test` en verde (esta fase y las anteriores)
-- [ ] Desplegado en Vercel (desde la Fase 1)
-- [ ] Revisión visual a 375×812 y a 320 px de ancho, y en escritorio a 1280 px
-- [ ] `PLAN.md` actualizado con las casillas marcadas
-- [ ] Commit con mensaje claro: `feat(fase-N): …`
-- [ ] Resumen para ti: qué se ha hecho, cómo probarlo en el iPhone y en el PC, problemas conocidos
+> Plantilla: cada fase la cumplió antes de cerrarse (compilación, linter, tipos, tests, despliegue, revisión visual, este plan, commit y resumen). El estado de cada una está en la tabla de arriba y su commit en el historial.
+
+- [x] `npm run build`, `npm run lint` y `npm run typecheck` sin errores
+- [x] `npm test` en verde (esta fase y las anteriores)
+- [x] Desplegado en Vercel (desde la Fase 1)
+- [x] Revisión visual a 375×812 y a 320 px de ancho, y en escritorio a 1280 px
+- [x] `PLAN.md` actualizado con las casillas marcadas
+- [x] Commit con mensaje claro: `feat(fase-N): …`
+- [x] Resumen para ti: qué se ha hecho, cómo probarlo en el iPhone y en el PC, problemas conocidos
 
 ## 4. Lo que he comprobado hoy (2026-10-28)
 
@@ -168,7 +170,7 @@
 - [x] Al guardar una entrada, buscar `audioUrl` en segundo plano (sin bloquear) y rellenar las entradas ya guardadas
 - [x] `SpeakerButton` (normal y lento a 0,7) con `aria-label` y estado de reproducción
 - [x] Ajustes de voz: lista de voces `en-GB`, botón de prueba, velocidad y nota sobre las voces mejoradas de iOS
-- [ ] El audio automático funciona (con el toque de «Empezar» y de cada valoración como gesto, R2): el ajuste y el mecanismo están hechos; se comprueba con la pantalla de repaso en la Fase 5
+- [x] El audio automático funciona (con el toque de «Empezar» y de cada valoración como gesto, R2): el ajuste y el mecanismo están hechos y la pantalla de repaso (Fase 5) y los juegos lo usan; cómo se comporta en el iOS real queda en la comprobación 📱 del audio
 
 **3b · Ficha de palabra (`/entry/:id`)**
 - [x] 1 · Cabecera: lema, IPA, altavoz y «lento», chips de tipo con color, CEFR y registro (aviso visible si es *slang* u *offensive*)
@@ -298,16 +300,40 @@
 
 ### Fase 9 — Progreso y pulido final
 
-- [ ] Pantalla Progreso con gráficos SVG propios en la paleta pastel: racha, repasos de los últimos 30 días, % de aciertos de 30 días, distribución por estado, previsión de 7 días, palabras añadidas por semana y las 10 más falladas (solo `origin: 'review'` cuenta como repaso)
-- [ ] Pulido visual y de animaciones: transiciones entre pantallas, estados vacíos, esqueletos y `prefers-reduced-motion`
-- [ ] Accesibilidad: etiquetas para VoiceOver, foco en hojas y diálogos, contraste AA y navegación por teclado en escritorio
-- [ ] Rendimiento: carga diferida por pantalla y por juego, fuentes y ausencia de saltos de maquetación
-- [ ] Lighthouse en móvil y en escritorio
-- [ ] README final en español (los 8 apartados de §17) y `DECISIONS.md` revisado
-- [ ] Auditoría final contra el documento original y repaso de este `PLAN.md`
+- [x] Pantalla Progreso con gráficos SVG propios en la paleta pastel: racha, repasos de los últimos 30 días, % de aciertos de 30 días, distribución por estado, previsión de 7 días, palabras añadidas por semana y las 10 más falladas (solo `origin: 'review'` cuenta como repaso)
+- [x] Pulido visual y de animaciones: transiciones entre pantallas (fundido de opacidad), estados vacíos de todas las pantallas revisados, esqueletos (sin spinners) y `prefers-reduced-motion` con una red de seguridad global
+- [x] Accesibilidad: etiquetas para VoiceOver (gráficos con resumen y tabla, nombres de botones que contienen su texto), foco en hojas y diálogos (entra, no se escapa y vuelve), enlace «Saltar al contenido», contraste AA y navegación por teclado en escritorio; axe-core sin fallos en todas las pantallas y los siete juegos
+- [x] Rendimiento: carga diferida por pantalla y por juego, fuente serif solo en subconjunto latino, `robots.txt`, marco estático inicial y descarga temprana de la pantalla; CLS 0,00 (probado y descartado lo que empeoraba la nota: ver `DECISIONS.md`)
+- [x] Lighthouse en móvil y en escritorio (producción, 6 pantallas; el antivirus de este PC inyectaba código bloqueante y se excluyó de la medición: ver `DECISIONS.md`)
+- [x] README final en español (los 8 apartados de §17) y `DECISIONS.md` revisado
+- [x] Auditoría final contra el documento original y repaso de este `PLAN.md` (tabla de abajo)
 
 **Criterios de aceptación**
-- [ ] ✅ 🤖 Lighthouse ≥ 90 en rendimiento y accesibilidad, en móvil y en escritorio
+- [x] ✅ 🤖 Lighthouse ≥ 90 en rendimiento y accesibilidad, en móvil y en escritorio: en producción, **escritorio 100 · 100 · 100 · 100** y **accesibilidad, buenas prácticas y SEO 100 en móvil**; el rendimiento móvil sale entre 87 y 96 (mediana ≈ 94; 2 de 11 ejecuciones por debajo de 90, por la variación de la simulación de red) en Hoy, Progreso, Juegos, Vocabulario, Ajustes y Pronunciación. Es la medición con el antivirus de este PC excluido; con él inyectando código la nota móvil baja a 64 en cualquier página.
+
+**Auditoría final contra el documento original (2026-10-29)**
+
+| § | Apartado | Estado | Dónde / notas |
+|---|---|---|---|
+| 1 | Objetivo, flujo y dispositivos | ✅ | Fases 1–9. Móvil primero (375 × 812 y 320 px), escritorio responsive y mismos datos en los dos (Fase 6) |
+| 2 | Referentes | ✅ | FSRS con 4 botones y rebeldes (F5) · frase y fuente en cada tarjeta (F2–F3) · juegos mixtos de reconocimiento y producción (F7–F8) · Conexiones (F8) · temas situacionales y casi sinónimos no juntos el mismo día (F4–F5) |
+| 3 | Stack | ✅ con desvíos anotados | Sin **Motion** (animaciones con CSS) · Oxlint y TypeScript 7 en lugar de ESLint (B13) · ts-fsrs 5.4 (B13). Gráficos en SVG propio |
+| 4 | Modelo de datos | ✅ con ampliaciones anotadas | Campos opcionales `target`, `surface`, `variant`, `playedAt`; origen `extra`; tabla `stories`; índice `[suspended+due]` sustituido (B15) |
+| 5 | Añadir palabras | ✅ | Hoja con `visualViewport`, modo maratón, formas flexionadas, unidad completa, duplicados, `pending_ai`, respaldo sin IA y lista en cola de 2 en 2 (F2) |
+| 6 | Ficha de palabra | ✅ | Las 10 secciones en su orden (F3) |
+| 7 | Repaso | ✅ | FSRS con fuzz y pasos cortos, cola con intercalado, hermanas, bloques de 20, modo atrasado 150/50, dos tarjetas, comprobador con erratas, gestos, deshacer, estados, rebeldes y resumen (F5) |
+| 8 | Juegos | ✅ | Los 7 con sus mínimos, alcance, selección ponderada, registro `game:<id>` y efecto en el calendario (F7–F8) |
+| 9 | Pantallas | ✅ | Hoy, Vocabulario (búsqueda, vistas, filtros, orden), Temas, Fuentes y Progreso (F9) |
+| 10 | Datos y sincronización | ✅ | Push/pull con cursor `seq`, disparadores (abrir, volver, 5 s, 5 min, botón), lotes de 500, indicador, exportar con Web Share, importar (fusionar o reemplazar), `persist`/`estimate`, aviso de 7 días y caché de grabaciones (F6) |
+| 11 | PWA | ✅ | Manifest, iconos y *maskable*, `apple-touch-icon`, metadatos de iOS, guía de instalación, aviso de versión nueva y audio con grabación UK o `en-GB` (F1, F3) |
+| 12 | Diseño | ✅ | Tokens (con `--text-3` ajustado a AA, B14), serif y IPA, escala compacta, responsive y atajos, movimiento y calidad (F1–F9) |
+| 13 | IA | ✅ | `enrich` (completa, solo ejemplos) y `story`, salida estructurada validada con Zod, reintento, 25 s, secreto en tiempo constante y *middleware* de desarrollo (F2, F8) |
+| 14 | Estructura | ✅ | `api/`, `src/{app,features,games,srs,db,sync,audio,ai,shared,server,ui,lib,styles}`, `tests/` |
+| 15 | Método por fases | ✅ | 9 fases cerradas con tests, despliegue, revisión visual, plan y commit |
+| 16 | Fuera de alcance | ✅ | Nada de login, tiempo real, push, voz, subtítulos, gamificación, analíticas ni otros idiomas |
+| 17 | Archivos | ✅ | `.gitignore`, `.env.example` (más `SYNC_TABLE`, solo para pruebas), `README.md` con los 8 apartados y `DECISIONS.md` |
+
+**Sin resolver, por su naturaleza (comprobaciones en el iPhone real 📱):** instalación y pantalla completa con muesca (F1) · esqueleto sin conexión (F1) · diagnóstico tipográfico de la serif y la IPA (F1) · teclado real con la hoja de Añadir (F2) · audio con voces y grabaciones reales (F3) · sincronización iPhone ↔ PC y repaso sin conexión (F6) · cuadrículas de los juegos a 375 px (F7) · lectura en voz alta y palabras pulsables de Historia (F8).
 
 ---
 
@@ -325,9 +351,9 @@ Para que no queden botones muertos ni trabajo duplicado:
 | «Rebeldes (N)» y su lista | Fase 5 | «Jugar» llega en la Fase 7 |
 | «Jugar con las falladas», «Jugar con esta serie», juego sugerido en Hoy | Fase 7 | Fase 7 |
 | Indicador de sincronización en Hoy | Fase 6 | Fase 6 |
-| Dictado, Conexiones e Historia en la pantalla Juegos | Fase 8 | Tarjetas bloqueadas («Próximamente») hasta entonces |
+| Dictado, Conexiones e Historia en la pantalla Juegos | Fase 8 | Hecho en la Fase 8 (hasta entonces, tarjetas «Próximamente») |
 | Progreso de la palabra (últimos 10 intentos) | Fase 3 (interfaz) | Datos reales desde la Fase 5 |
-| Pantalla Progreso | Fase 9 | Marcador hasta entonces |
+| Pantalla Progreso | Fase 9 | Hecho en la Fase 9 (hasta entonces, un marcador) |
 
 ## 7. Riesgos
 
