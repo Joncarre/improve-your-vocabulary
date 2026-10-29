@@ -42,7 +42,7 @@ function SymbolRow({ item }: { item: Sound | Mark }) {
   return (
     <li className="grid grid-cols-[2.5rem_minmax(0,1fr)] items-center gap-x-3 px-3 py-3 sm:grid-cols-[3.5rem_minmax(0,1fr)] sm:items-start">
       <div className="ipa text-center text-[26px] leading-none text-accent sm:row-span-3 sm:pt-0.5 sm:text-[28px]">{item.symbol}</div>
-      <h4 className="text-body font-semibold">{title}</h4>
+      <h3 className="text-body font-semibold">{title}</h3>
       <p className="col-span-2 mt-1 text-secondary text-text-2 sm:col-span-1 sm:col-start-2 sm:mt-0.5">{item.tip}</p>
       <div className="col-span-2 sm:col-span-1 sm:col-start-2">
         <Words idBase={`sym-${item.symbol}`} examples={item.examples} />

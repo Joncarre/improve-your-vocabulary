@@ -82,7 +82,7 @@ export function GapSentence({ before, after, length, reveal, hint }: GapSentence
       {reveal ? (
         <mark className={`bg-transparent font-semibold ${reveal.tone === 'good' ? 'text-good' : 'text-again'}`}>{reveal.text}</mark>
       ) : (
-        <span aria-label="hueco" style={{ width: `${Math.min(14, Math.max(4, length))}ch` }} className="mx-0.5 inline-block border-b-2 border-accent align-baseline">
+        <span role="img" aria-label="hueco" style={{ width: `${Math.min(14, Math.max(4, length))}ch` }} className="mx-0.5 inline-block border-b-2 border-accent align-baseline">
           &nbsp;
         </span>
       )}

@@ -15,7 +15,6 @@ export function WordButton({ id, word, ipa }: WordButtonProps) {
   return (
     <button
       type="button"
-      aria-label={`Escuchar «${word}»`}
       onClick={() => (playing ? stopAudio() : playAudio({ key: id, text: word }))}
       className={`inline-flex min-h-11 items-center gap-1.5 rounded-control border px-2.5 py-1 transition-colors ${
         playing ? 'border-accent bg-accent/10 text-accent' : 'border-border bg-surface-2 text-text active:bg-surface'
@@ -23,6 +22,8 @@ export function WordButton({ id, word, ipa }: WordButtonProps) {
     >
       <Volume2 size={14} strokeWidth={1.75} className={playing ? 'animate-pulse motion-reduce:animate-none' : 'text-text-3'} aria-hidden="true" />
       <span className="text-left">
+        {/* Said before the word, so the name of the button contains what it shows (WCAG 2.5.3). */}
+        <span className="sr-only">Escuchar </span>
         <span className="block text-body leading-tight">{word}</span>
         {ipa ? <span className="ipa block text-caption leading-tight text-text-3">{ipa}</span> : null}
       </span>

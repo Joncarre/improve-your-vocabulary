@@ -1,8 +1,9 @@
 import { X } from 'lucide-react'
-import { useEffect, useId, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useVisualViewport } from '../lib/useVisualViewport.ts'
 import { IconButton } from './Button.tsx'
+import { useModalFocus } from './useModalFocus.ts'
 
 interface ModalSheetProps {
   title: string
@@ -19,6 +20,9 @@ interface ModalSheetProps {
 export function ModalSheet({ title, onClose, children, footer }: ModalSheetProps) {
   const titleId = useId()
   const { top, height, keyboardOpen } = useVisualViewport()
+  const overlayRef = useRef<HTMLDivElement | null>(null)
+  const panelRef = useRef<HTMLDivElement | null>(null)
+  useModalFocus(overlayRef, panelRef)
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -34,7 +38,7 @@ export function ModalSheet({ title, onClose, children, footer }: ModalSheetProps
   }, [onClose])
 
   return createPortal(
-    <div className="fixed inset-x-0 z-50 flex items-end justify-center lg:items-center" style={{ top, height }}>
+    <div ref={overlayRef} className="fixed inset-x-0 z-50 flex items-end justify-center lg:items-center" style={{ top, height }}>
       <button
         type="button"
         aria-label="Cerrar"
@@ -43,10 +47,12 @@ export function ModalSheet({ title, onClose, children, footer }: ModalSheetProps
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
       />
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative flex w-full max-w-lg flex-col rounded-t-sheet border border-b-0 border-border bg-surface lg:rounded-sheet lg:border-b"
+        tabIndex={-1}
+        className="relative flex w-full max-w-lg flex-col rounded-t-sheet border border-b-0 border-border bg-surface outline-none lg:rounded-sheet lg:border-b"
         style={{ maxHeight: height - 8 }}
       >
         <div className="flex items-center justify-between pl-4 pr-1 pt-1">

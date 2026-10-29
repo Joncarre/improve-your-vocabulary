@@ -225,7 +225,8 @@ export default function GamePage() {
                   className={`flex min-h-12 items-center justify-between gap-3 rounded-card border px-3 text-left transition-colors motion-reduce:transition-none ${selected ? 'border-accent bg-accent/15' : 'border-border bg-surface active:bg-surface-2'}`}
                 >
                   <span className={selected ? 'text-accent' : ''}>{option.label}</span>
-                  {option.hint ? <span className="text-secondary text-text-3">{option.hint}</span> : null}
+                  {/* On the tinted background of the chosen option the dimmest grey is below AA contrast. */}
+                  {option.hint ? <span className={`text-secondary ${selected ? 'text-text-2' : 'text-text-3'}`}>{option.hint}</span> : null}
                 </button>
               )
             })}

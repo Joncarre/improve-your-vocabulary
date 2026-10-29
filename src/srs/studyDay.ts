@@ -31,8 +31,25 @@ export function studyDayKey(now: number, dayStartHour: number): string {
   return keyOf(new Date(studyDayStart(now, dayStartHour)))
 }
 
+/** The key `days` days after `key` (before, when negative), by calendar and not by clock arithmetic. */
+export function addDaysToKey(key: string, days: number): string {
+  const [year = 0, month = 1, day = 1] = key.split('-').map(Number)
+  return keyOf(new Date(year, month - 1, day + days))
+}
+
 /** The key of the day before `key` ("2026-03-01" -> "2026-02-28"), by calendar and not by clock arithmetic. */
 export function previousDayKey(key: string): string {
+  return addDaysToKey(key, -1)
+}
+
+/** A calendar date of a key at local noon, which is safe from every change of clocks: for names of days, not for boundaries. */
+export function dayKeyDate(key: string): Date {
   const [year = 0, month = 1, day = 1] = key.split('-').map(Number)
-  return keyOf(new Date(year, month - 1, day - 1))
+  return new Date(year, month - 1, day, 12)
+}
+
+/** The Monday of the week (Monday to Sunday, as in Spain) a day belongs to. */
+export function mondayOfKey(key: string): string {
+  const sinceMonday = (dayKeyDate(key).getDay() + 6) % 7
+  return addDaysToKey(key, -sinceMonday)
 }

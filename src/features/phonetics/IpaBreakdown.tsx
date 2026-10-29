@@ -48,11 +48,12 @@ export function IpaBreakdown({ ipa, defaultOpen = false, idPrefix = 'bd' }: IpaB
               {example && item.kind === 'sound' ? (
                 <button
                   type="button"
-                  aria-label={`${item.text}: ${hint}. Escuchar «${example.word}»`}
                   onClick={() => playAudio({ key: `${idPrefix}-${item.text}`, text: example.word })}
                   className="h-full w-full rounded-card border border-border bg-surface p-2.5 text-left active:bg-surface-2"
                 >
                   {body}
+                  {/* The name of the button is what it shows plus what it does (a label that left out the visible text would fail WCAG 2.5.3). */}
+                  <span className="sr-only">. Pulsa para escuchar «{example.word}»</span>
                 </button>
               ) : (
                 <div className="h-full rounded-card border border-border bg-surface p-2.5">{body}</div>

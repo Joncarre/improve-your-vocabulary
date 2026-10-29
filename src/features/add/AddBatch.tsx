@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, Clock, Copy, Loader2 } from 'lucide-react'
+import { AlertTriangle, Check, Clock, Copy } from 'lucide-react'
 import { useId, useState } from 'react'
 import { AI_LIMITS, type Source } from '../../shared/index.ts'
 import { Button } from '../../ui/Button.tsx'
@@ -11,7 +11,8 @@ const INPUT =
 
 function RowIcon({ row }: { row: RowState }) {
   if (row.phase === 'waiting') return <span className="size-4 rounded-full border border-border" aria-hidden="true" />
-  if (row.phase === 'working') return <Loader2 size={16} className="animate-spin text-accent motion-reduce:animate-none" aria-hidden="true" />
+  // A soft pulse and not a spinner (spec §12): the row also says "Analizando…".
+  if (row.phase === 'working') return <span className="size-4 animate-pulse rounded-full bg-accent/60 motion-reduce:animate-none" aria-hidden="true" />
   switch (row.status) {
     case 'saved':
       return <Check size={16} className="text-good" aria-hidden="true" />

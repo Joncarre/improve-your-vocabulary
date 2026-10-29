@@ -27,6 +27,8 @@ export function Onboarding() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="onboarding-title"
+      // There is one button and it has the focus: Tab stays on it instead of wandering behind the welcome.
+      onKeyDown={(event) => event.key === 'Tab' && event.preventDefault()}
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 pb-[calc(env(safe-area-inset-bottom)+16px)] backdrop-blur-sm md:items-center"
     >
       <div className="w-full max-w-md rounded-sheet border border-border bg-surface p-5">

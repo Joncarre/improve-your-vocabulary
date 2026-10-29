@@ -77,4 +77,12 @@ describe('design tokens', () => {
   it.each(PASTELS)('dark text is AA on a filled %s button or tile', (name) => {
     expect(ratio(color('bg'), color(name))).toBeGreaterThanOrEqual(AA)
   })
+
+  it('the secondary grey is AA on the accent tint of a chosen option (the dimmest grey is not: it must not be used there)', () => {
+    for (const surface of SURFACES) {
+      const tint = mix(color('accent'), color(surface), 0.15)
+      expect(ratio(color('text-2'), tint), `text-2 on ${surface}`).toBeGreaterThanOrEqual(AA)
+    }
+    expect(ratio(color('text-3'), mix(color('accent'), color('surface-2'), 0.15))).toBeLessThan(AA)
+  })
 })

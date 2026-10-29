@@ -17,16 +17,37 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
     <title>Improve Your Vocabulary</title>
-    <!-- Avoids a white flash before the stylesheet loads -->
+    <!-- Avoids a white flash before the stylesheet loads, and paints the frame of the first screen from the HTML itself, so something is on screen before the app has downloaded -->
     <style>
       html,
       body {
         background: #0a0a0c;
       }
+      .boot {
+        box-sizing: border-box;
+        max-width: 720px;
+        margin: 0 auto;
+        padding: calc(env(safe-area-inset-top) + 12px) 16px 0;
+        color: #f4f4f5;
+        font: 600 25px/1.15 -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        letter-spacing: -0.01em;
+      }
+      .boot div {
+        margin-top: 12px;
+        border-radius: 14px;
+        background: #141418;
+      }
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Replaced by the app as soon as it starts -->
+      <div class="boot" aria-hidden="true">
+        Improve Your Vocabulary
+        <div style="height: 176px"></div>
+        <div style="height: 80px"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
